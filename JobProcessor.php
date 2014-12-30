@@ -49,7 +49,11 @@ class JobProcessor implements
      */
     public function startProcessing(Task\TaskInterface $task)
     {
-        // TODO: Implement startProcessing() method.
+        /** @todo This implementation is incomplete */
+
+        $this->getAdapter()->supportsTask($task);
+        // or
+        $this->getAdapter()->supportsAction($task->getAction());
     }
 
     /**
