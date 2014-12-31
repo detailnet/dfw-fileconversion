@@ -72,19 +72,21 @@ class JobProcessor implements
     public function checkProcessing(Task\TaskInterface $task)
     {
         $adapter = $this->getAdapter();
-
         $result = $adapter->checkProcessing($task);
 
         return $result;
     }
 
     /**
-     * @param array $result
+     * @param Task\TaskInterface $task
+     * @param array $data
      * @return Task\ResultInterface
      */
-    public function endProcessing(array $result)
+    public function endProcessing(Task\TaskInterface $task, array $data)
     {
-        // TODO: Implement endProcessing() method.
-        throw new \Exception('Not yet implemented');
+        $adapter = $this->getAdapter();
+        $result = $adapter->endProcessing($task, $data);
+
+        return $result;
     }
 }

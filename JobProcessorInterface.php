@@ -23,8 +23,9 @@ interface JobProcessorInterface
     public function checkProcessing(Task\TaskInterface $task);
 
     /**
-     * @param array $result
+     * @param Task\TaskInterface $task
+     * @param array $data
      * @return Task\ResultInterface
      */
-    public function endProcessing(array $result);
+    public function endProcessing(Task\TaskInterface $task, array $data);
 }

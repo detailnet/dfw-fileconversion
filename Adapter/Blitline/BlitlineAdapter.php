@@ -76,27 +76,7 @@ class BlitlineAdapter extends BaseAdapter //implements
         $client = $this->getBlitlineClient();
 
         try {
-            $response = $this->getBlitlineResponse(
-                $client->pollJob(array('jobId' => $task->getProcessId()))
-            );
-
-            if ($response->isSuccess()) {
-                $outputs = array();
-
-                foreach ($response->getImages() as $image) {
-                    $outputs[] = new Task\Output(
-                        isset($image['image_identifier']) ? $image['image_identifier'] : null,
-                        isset($image['s3_url']) ? $image['s3_url'] : null,
-                        isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : null
-                    );
-                }
-
-                $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
-            } else {
-                $result = new Task\ErrorResult($task, $response->getError());
-            }
-
-            return $result;
+            $data = $client->pollJob(array('jobId' => $task->getProcessId()));
 
         } catch (\Exception $e) {
             throw new RuntimeException(
@@ -105,6 +85,36 @@ class BlitlineAdapter extends BaseAdapter //implements
                 $e
             );
         }
+
+        return $this->endProcessing($task, $data);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @param array $data
+     * @return Task\ResultInterface
+     */
+    public function endProcessing(Task\TaskInterface $task, array $data)
+    {
+        $response = $this->getBlitlineResponse($data);
+
+        if ($response->isSuccess()) {
+            $outputs = array();
+
+            foreach ($response->getImages() as $image) {
+                $outputs[] = new Task\Output(
+                    isset($image['image_identifier']) ? $image['image_identifier'] : null,
+                    isset($image['s3_url']) ? $image['s3_url'] : null,
+                    isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : null
+                );
+            }
+
+            $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
+        } else {
+            $result = new Task\ErrorResult($task, $response->getError());
+        }
+
+        return $result;
     }
 
 //    /**

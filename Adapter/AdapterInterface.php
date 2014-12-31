@@ -23,4 +23,11 @@ interface AdapterInterface
      * @return Task\ResultInterface|null
      */
     public function checkProcessing(Task\TaskInterface $task);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @param array $data
+     * @return Task\ResultInterface
+     */
+    public function endProcessing(Task\TaskInterface $task, array $data);
 }
