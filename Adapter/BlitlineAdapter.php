@@ -2,8 +2,11 @@
 
 namespace Application\Job\Application\JobProcessing\Adapter;
 
-use Application\Job\Application\JobProcessing\Task;
 use Detail\Blitline\Client\BlitlineClient;
+
+use Application\Job\Application\JobProcessing\Task;
+use Application\Job\Domain\Exception\RuntimeException;
+
 
 class BlitlineAdapter extends BaseAdapter //implements
 //    Features\Polling,
@@ -49,10 +52,20 @@ class BlitlineAdapter extends BaseAdapter //implements
         $job = $this->createBlitlineJob($task);
 
         $client = $this->getBlitlineClient();
-        $response = $client->postJob($job);
 
-        var_dump($response);
-        exit;
+        try {
+            $response = $client->postJob($job);
+            $processId = $this->handleBlitlineResponse($response);
+
+        } catch (\Exception $e) {
+            throw new RuntimeException(
+                sprintf('Blitline API request failed: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        }
+
+        return $processId;
     }
 
 //    /**
@@ -82,12 +95,58 @@ class BlitlineAdapter extends BaseAdapter //implements
     protected function createBlitlineJob(Task\TaskInterface $task)
     {
         $jobBuilder = $this->getBlitlineClient()->getJobBuilder();
+        $job = $task->getJob();
 
-        /** @todo Actually build the job */
+        $blitlineJob = $jobBuilder->createJob()
+            ->setSourceUrl($job->getSourceUrl());
 
-        $job = $jobBuilder->createJob()
-            ->setSourceUrl('');
+        foreach ($job->getActions() as $action) {
+            $saveOptions = $action->getSaveOptions();
+            $saveOptionsData = array(
+                'image_identifier' => $saveOptions->getIdentifier(),
+            );
 
-        return $job;
+            switch ($saveOptions->getType()) {
+                case $saveOptions::TYPE_S3:
+                    $saveOptionsData['s3_destination'] = $saveOptions->getParams();
+                    break;
+                default:
+                    throw new RuntimeException(
+                        sprintf(
+                            'Adapter does not support save options type "%s"',
+                            $saveOptions->getType()
+                        )
+                    );
+                    break;
+            }
+
+            $blitlineJob->addFunction(
+                $jobBuilder->createFunction()
+                    ->setName($action->getName())
+                    ->setParams($action->getParams())
+                    ->setSaveOptions($saveOptionsData)
+            );
+        }
+
+        return $blitlineJob;
+    }
+
+    protected function handleBlitlineResponse(array $response)
+    {
+        if (!isset($response['results']) || !is_array($response['results'])) {
+            throw new RuntimeException('Unexpected response format; contains no result');
+        }
+
+        $result = $response['results'];
+
+        if (isset($result['error'])) {
+            throw new RuntimeException(sprintf('Received error; %s', $result['error']));
+        }
+
+        if (!isset($result['job_id']) || !is_string($result['job_id'])) {
+            throw new RuntimeException('Unexpected response format; contains no job identifier');
+        }
+
+        return $result['job_id'];
     }
 }
