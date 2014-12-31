@@ -105,7 +105,7 @@ class BlitlineAdapter extends BaseAdapter //implements
                 $outputs[] = new Task\Output(
                     isset($image['image_identifier']) ? $image['image_identifier'] : null,
                     isset($image['s3_url']) ? $image['s3_url'] : null,
-                    isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : null
+                    isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : array()
                 );
             }
 
