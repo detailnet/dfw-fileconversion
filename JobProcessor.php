@@ -51,9 +51,17 @@ class JobProcessor implements
     {
         /** @todo This implementation is incomplete */
 
-        $this->getAdapter()->supportsTask($task);
-        // or
-        $this->getAdapter()->supportsAction($task->getAction());
+        $adapter = $this->getAdapter();
+
+//        $adapter->supportsTask($task);
+//        // or
+//        $adapter->supportsAction($task->getAction());
+
+        $processId = $adapter->startProcessing($task);
+
+        $task->setProcessId($processId);
+
+        return $processId;
     }
 
     /**

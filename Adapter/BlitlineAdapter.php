@@ -2,13 +2,14 @@
 
 namespace Application\Job\Application\JobProcessing\Adapter;
 
+use Application\Job\Application\JobProcessing\Task;
 use Detail\Blitline\Client\BlitlineClient;
 
-class BlitlineAdapter extends BaseAdapter implements
+class BlitlineAdapter extends BaseAdapter //implements
 //    Features\Polling,
 //    Features\SynchronousProcessing,
 //    Features\AsynchronousProcessing,
-    Features\Saving
+//    Features\Saving
 {
     /**
      * @var BlitlineClient
@@ -40,22 +41,53 @@ class BlitlineAdapter extends BaseAdapter implements
     }
 
     /**
-     * @param string $actionName
-     * @return bool
+     * @param Task\TaskInterface $task
+     * @return string Process identifier
      */
-    public function supportsAction($actionName)
+    public function startProcessing(Task\TaskInterface $task)
     {
-        /** @todo Replace with real implementation */
-        return true;
+        $job = $this->createBlitlineJob($task);
+
+        $client = $this->getBlitlineClient();
+        $response = $client->postJob($job);
+
+        var_dump($response);
+        exit;
     }
 
+//    /**
+//     * @param string $actionName
+//     * @return bool
+//     */
+//    public function supportsAction($actionName)
+//    {
+//        /** @todo Replace with real implementation */
+//        return true;
+//    }
+//
+//    /**
+//     * @param string $type
+//     * @return boolean
+//     */
+//    public function supportsSavingType($type)
+//    {
+//        /** @todo Replace with real implementation */
+//        return true;
+//    }
+
     /**
-     * @param string $type
-     * @return boolean
+     * @param Task\TaskInterface $task
+     * @return \Detail\Blitline\Job\Definition\JobDefinitionInterface
      */
-    public function supportsSavingType($type)
+    protected function createBlitlineJob(Task\TaskInterface $task)
     {
-        /** @todo Replace with real implementation */
-        return true;
+        $jobBuilder = $this->getBlitlineClient()->getJobBuilder();
+
+        /** @todo Actually build the job */
+
+        $job = $jobBuilder->createJob()
+            ->setSourceUrl('');
+
+        return $job;
     }
 }

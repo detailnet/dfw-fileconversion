@@ -2,11 +2,19 @@
 
 namespace Application\Job\Application\JobProcessing\Adapter;
 
+use Application\Job\Application\JobProcessing\Task;
+
 interface AdapterInterface
 {
+//    /**
+//     * @param string $actionName
+//     * @return bool
+//     */
+//    public function supportsAction($actionName);
+
     /**
-     * @param string $actionName
-     * @return bool
+     * @param Task\TaskInterface $task
+     * @return string Process identifier
      */
-    public function supportsAction($actionName);
+    public function startProcessing(Task\TaskInterface $task);
 }
