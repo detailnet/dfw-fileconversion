@@ -131,6 +131,10 @@ class BlitlineAdapter extends BaseAdapter //implements
         return $blitlineJob;
     }
 
+    /**
+     * @param array $response
+     * @return string Blitline job identifier
+     */
     protected function handleBlitlineResponse(array $response)
     {
         if (!isset($response['results']) || !is_array($response['results'])) {

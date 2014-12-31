@@ -41,6 +41,7 @@ class JobProcessor implements
     public function process(Task\TaskInterface $task)
     {
         // TODO: Implement process() method.
+        throw new \Exception('Not yet implemented');
     }
 
     /**
@@ -71,5 +72,6 @@ class JobProcessor implements
     public function endProcessing(array $result)
     {
         // TODO: Implement endProcessing() method.
+        throw new \Exception('Not yet implemented');
     }
 }
