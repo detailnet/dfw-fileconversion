@@ -1,9 +1,10 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter;
+namespace Application\Job\Application\JobProcessing\Adapter\Blitline;
 
 use Detail\Blitline\Client\BlitlineClient;
 
+use Application\Job\Application\JobProcessing\Adapter\BaseAdapter;
 use Application\Job\Application\JobProcessing\Task;
 use Application\Job\Domain\Exception\RuntimeException;
 
@@ -54,8 +55,8 @@ class BlitlineAdapter extends BaseAdapter //implements
         $client = $this->getBlitlineClient();
 
         try {
-            $response = $client->postJob($job);
-            $processId = $this->handleBlitlineResponse($response);
+            $response = $this->getBlitlineResponse($client->postJob($job));
+            return $response->getJobId();
 
         } catch (\Exception $e) {
             throw new RuntimeException(
@@ -64,8 +65,46 @@ class BlitlineAdapter extends BaseAdapter //implements
                 $e
             );
         }
+    }
 
-        return $processId;
+    /**
+     * @param Task\TaskInterface $task
+     * @return Task\ResultInterface|null
+     */
+    public function checkProcessing(Task\TaskInterface $task)
+    {
+        $client = $this->getBlitlineClient();
+
+        try {
+            $response = $this->getBlitlineResponse(
+                $client->pollJob(array('jobId' => $task->getProcessId()))
+            );
+
+            if ($response->isSuccess()) {
+                $outputs = array();
+
+                foreach ($response->getImages() as $image) {
+                    $outputs[] = new Task\Output(
+                        isset($image['image_identifier']) ? $image['image_identifier'] : null,
+                        isset($image['s3_url']) ? $image['s3_url'] : null,
+                        isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : null
+                    );
+                }
+
+                $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
+            } else {
+                $result = new Task\ErrorResult($task, $response->getError());
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            throw new RuntimeException(
+                sprintf('Blitline API request failed: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        }
     }
 
 //    /**
@@ -131,26 +170,12 @@ class BlitlineAdapter extends BaseAdapter //implements
         return $blitlineJob;
     }
 
-    /**
-     * @param array $response
-     * @return string Blitline job identifier
-     */
-    protected function handleBlitlineResponse(array $response)
+    protected function getBlitlineResponse(array $response)
     {
         if (!isset($response['results']) || !is_array($response['results'])) {
             throw new RuntimeException('Unexpected response format; contains no result');
         }
 
-        $result = $response['results'];
-
-        if (isset($result['error'])) {
-            throw new RuntimeException(sprintf('Received error; %s', $result['error']));
-        }
-
-        if (!isset($result['job_id']) || !is_string($result['job_id'])) {
-            throw new RuntimeException('Unexpected response format; contains no job identifier');
-        }
-
-        return $result['job_id'];
+        return BlitlineResponse::fromArray($response['results']);
     }
 }

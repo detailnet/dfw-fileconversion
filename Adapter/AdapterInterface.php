@@ -17,4 +17,10 @@ interface AdapterInterface
      * @return string Process identifier
      */
     public function startProcessing(Task\TaskInterface $task);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return Task\ResultInterface|null
+     */
+    public function checkProcessing(Task\TaskInterface $task);
 }

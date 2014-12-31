@@ -17,6 +17,12 @@ interface JobProcessorInterface
     public function startProcessing(Task\TaskInterface $task);
 
     /**
+     * @param Task\TaskInterface $task
+     * @return Task\ResultInterface
+     */
+    public function checkProcessing(Task\TaskInterface $task);
+
+    /**
      * @param array $result
      * @return Task\ResultInterface
      */

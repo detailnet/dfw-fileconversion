@@ -66,6 +66,19 @@ class JobProcessor implements
     }
 
     /**
+     * @param Task\TaskInterface $task
+     * @return Task\ResultInterface|null
+     */
+    public function checkProcessing(Task\TaskInterface $task)
+    {
+        $adapter = $this->getAdapter();
+
+        $result = $adapter->checkProcessing($task);
+
+        return $result;
+    }
+
+    /**
      * @param array $result
      * @return Task\ResultInterface
      */

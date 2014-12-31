@@ -29,6 +29,19 @@ class Task implements
     /**
      * @param Job $job
      * @param int $priority
+     * @return Task
+     */
+    public static function fromJob(Job $job, $priority = null)
+    {
+        $task = new static($job, $priority);
+        $task->setProcessId($job->getProcessId());
+
+        return $task;
+    }
+
+    /**
+     * @param Job $job
+     * @param int $priority
      */
     public function __construct(Job $job, $priority = null)
     {
