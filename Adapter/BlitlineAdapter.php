@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter\Blitline;
+namespace Application\Job\Application\JobProcessing\Adapter;
 
 use Detail\Blitline\Client\BlitlineClient;
+use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
-use Application\Job\Application\JobProcessing\Adapter\BaseAdapter;
 use Application\Job\Application\JobProcessing\Task;
 use Application\Job\Domain\Exception\RuntimeException;
 
@@ -55,7 +55,7 @@ class BlitlineAdapter extends BaseAdapter //implements
         $client = $this->getBlitlineClient();
 
         try {
-            $response = $this->getBlitlineResponse($client->postJob($job));
+            $response = $client->submitJob($job);
             return $response->getJobId();
 
         } catch (\Exception $e) {
@@ -76,7 +76,7 @@ class BlitlineAdapter extends BaseAdapter //implements
         $client = $this->getBlitlineClient();
 
         try {
-            $data = $client->pollJob(array('jobId' => $task->getProcessId()));
+            $response = $client->pollJob(array('jobId' => $task->getProcessId()));
 
         } catch (\Exception $e) {
             throw new RuntimeException(
@@ -86,17 +86,23 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         }
 
-        return $this->endProcessing($task, $data);
+        return $this->endProcessing($task, $response);
     }
 
     /**
      * @param Task\TaskInterface $task
-     * @param array $data
+     * @param BlitlineJobProcessedResponse|array $response
      * @return Task\ResultInterface
      */
-    public function endProcessing(Task\TaskInterface $task, array $data)
+    public function endProcessing(Task\TaskInterface $task, $response)
     {
-        $response = $this->getBlitlineResponse($data);
+        if (is_array($response)) {
+            $response = $this->getBlitlineJobProcessedResponse($response);
+        } else if (!$response instanceof BlitlineJobProcessedResponse) {
+            throw new RuntimeException(
+                'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
+            );
+        }
 
         if ($response->isSuccess()) {
             $outputs = array();
@@ -180,12 +186,16 @@ class BlitlineAdapter extends BaseAdapter //implements
         return $blitlineJob;
     }
 
-    protected function getBlitlineResponse(array $response)
+    /**
+     * @param array $response
+     * @return BlitlineJobProcessedResponse
+     */
+    protected function getBlitlineJobProcessedResponse(array $response)
     {
         if (!isset($response['results']) || !is_array($response['results'])) {
             throw new RuntimeException('Unexpected response format; contains no result');
         }
 
-        return BlitlineResponse::fromArray($response['results']);
+        return new BlitlineJobProcessedResponse($response['results']);
     }
 }

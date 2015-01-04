@@ -26,8 +26,8 @@ interface AdapterInterface
 
     /**
      * @param Task\TaskInterface $task
-     * @param array $data
+     * @param mixed $response
      * @return Task\ResultInterface
      */
-    public function endProcessing(Task\TaskInterface $task, array $data);
+    public function endProcessing(Task\TaskInterface $task, $response);
 }
