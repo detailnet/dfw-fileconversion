@@ -15,6 +15,8 @@ class BlitlineAdapter extends BaseAdapter //implements
 //    Features\AsynchronousProcessing,
 //    Features\Saving
 {
+    const OPTION_POSTBACK_URL = 'postback_url';
+
     /**
      * @var BlitlineClient
      */
@@ -22,9 +24,12 @@ class BlitlineAdapter extends BaseAdapter //implements
 
     /**
      * @param BlitlineClient $blitlineClient
+     * @param array $options
      */
-    public function __construct(BlitlineClient $blitlineClient)
+    public function __construct(BlitlineClient $blitlineClient, array $options = array())
     {
+        parent::__construct($options);
+
         $this->blitlineClient = $blitlineClient;
     }
 
@@ -154,6 +159,12 @@ class BlitlineAdapter extends BaseAdapter //implements
 
         $blitlineJob = $jobBuilder->createJob()
             ->setSourceUrl($job->getSourceUrl());
+
+        $postbackUrl = $this->getOption(self::OPTION_POSTBACK_URL);
+
+        if ($postbackUrl !== null) {
+            $blitlineJob->setPostbackUrl($postbackUrl);
+        }
 
         foreach ($job->getActions() as $action) {
             $saveOptions = $action->getSaveOptions();
