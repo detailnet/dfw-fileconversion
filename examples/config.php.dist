@@ -1,0 +1,6 @@
+<?php
+
+return array(
+    's3bucket' => 'your-buchet-name',
+    's3path' => 'test-files', // Or any other path under your bucket
+);
