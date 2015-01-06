@@ -22,13 +22,9 @@ abstract class BaseResponse implements
      */
     public static function fromCommand(OperationCommand $command)
     {
-        $response = $command->getResponse()->json();
+        $result = $command->getResponse()->json();
 
-        if (!isset($response['results']) || !is_array($response['results'])) {
-            throw new RuntimeException('Unexpected response format; contains no result');
-        }
-
-        return new static($response['results']);
+        return new static($result);
     }
 
     /**

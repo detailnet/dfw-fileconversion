@@ -13,18 +13,42 @@ class Job extends BaseResponse
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getImages()
+    public function getSourceUrl()
     {
-        return $this->getResult('images');
+        return $this->getResult('sourceUrl');
     }
 
     /**
      * @return array
      */
-    public function getOriginalMeta()
+    public function getSourceMeta()
     {
-        return $this->getResult('original_meta');
+        return $this->getResult('sourceMeta');
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->getResult('status');
+    }
+
+    /**
+     * @return array
+     */
+    public function getActions()
+    {
+        return $this->getResult('actions');
+    }
+
+    /**
+     * @return array
+     */
+    public function getOutputs()
+    {
+        return $this->getResult('results');
     }
 }

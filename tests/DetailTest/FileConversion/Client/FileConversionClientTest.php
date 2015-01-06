@@ -4,8 +4,6 @@ namespace DetailTest\FileConversion\Client;
 
 use PHPUnit_Framework_TestCase as TestCase;
 
-use Guzzle\Service\Description\ServiceDescription;
-
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Job\JobBuilder;
 

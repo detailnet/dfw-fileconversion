@@ -17,5 +17,5 @@ $response = $client->fetchJob(array('job_id' => $jobId));
 if ($response->isError()) {
     var_dump($response->getError());
 } else {
-    var_dump($response->getId(), $response->getImages());
+    var_dump($response->getResult());
 }

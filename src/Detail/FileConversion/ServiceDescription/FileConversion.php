@@ -2,8 +2,28 @@
 
 return array(
     'name'        => 'DETAIL Web Services - File Conversion Service',
-    'description' => 'Image processing in the cloud',
     'operations'  => array(
+        'listJobs' => array(
+            'httpMethod'       => 'GET',
+            'uri'              => 'jobs',
+            'summary'          => 'List jobs',
+//            'documentationUrl' => 'http://tbd',
+            'parameters'       => array(
+                'page' => array(
+                    'description' => 'The number of the page',
+                    'location'    => 'query',
+                    'type'        => 'integer',
+                    'required'    => false,
+                ),
+                'page_size' => array(
+                    'description' => 'The number of jobs to list on a page',
+                    'location'    => 'query',
+                    'type'        => 'integer',
+                    'required'    => false,
+                ),
+            ),
+            'responseClass' => 'Detail\FileConversion\Response\JobList',
+        ),
         'fetchJob' => array(
             'httpMethod'       => 'GET',
             'uri'              => 'jobs/{job_id}',

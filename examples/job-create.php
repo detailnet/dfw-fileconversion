@@ -69,5 +69,5 @@ $response = $client->createJob($job);
 if ($response->isError()) {
     var_dump($response->getError());
 } else {
-    var_dump($response->getId());
+    var_dump($response->getResult());
 }
