@@ -15,6 +15,7 @@ use Detail\FileConversion\Response;
 /**
  * FileConversion API client.
  *
+ * @method Response\JobList listJobs(array $params = array())
  * @method Response\Job fetchJob(array $params = array())
  * @method Response\Job createJob(mixed $job = array())
  */
