@@ -2,13 +2,13 @@
 
 namespace DetailTest\FileConversion\Job\Definition;
 
-use Detail\FileConversion\Job\Definition\FunctionDefinition;
+use Detail\FileConversion\Job\Definition\ActionDefinition;
 
-class FunctionDefinitionTest extends DefinitionTestCase
+class ActionDefinitionTest extends DefinitionTestCase
 {
     protected function getDefinitionClass()
     {
-        return 'Detail\FileConversion\Job\Definition\FunctionDefinition';
+        return 'Detail\FileConversion\Job\Definition\ActionDefinition';
     }
 
     public function testNameCanBeSet()
@@ -18,7 +18,7 @@ class FunctionDefinitionTest extends DefinitionTestCase
 
         $this->setMethodReturnValue($definition, 'getOption', $name);
 
-        /** @var FunctionDefinition $definition */
+        /** @var ActionDefinition $definition */
 
         $this->assertEquals($definition, $definition->setName($name));
         $this->assertEquals($name, $definition->getName());
@@ -31,7 +31,7 @@ class FunctionDefinitionTest extends DefinitionTestCase
 
         $this->setMethodReturnValue($definition, 'getOption', $params);
 
-        /** @var FunctionDefinition $definition */
+        /** @var ActionDefinition $definition */
 
         $this->assertEquals($definition, $definition->setParams($params));
         $this->assertEquals($params, $definition->getParams());
@@ -44,7 +44,7 @@ class FunctionDefinitionTest extends DefinitionTestCase
 
         $this->setMethodReturnValue($definition, 'getOption', $saveOptions);
 
-        /** @var FunctionDefinition $definition */
+        /** @var ActionDefinition $definition */
 
         $this->assertEquals($definition, $definition->setSaveOptions($saveOptions));
         $this->assertEquals($saveOptions, $definition->getSaveOptions());

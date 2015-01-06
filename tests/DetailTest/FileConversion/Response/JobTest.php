@@ -13,29 +13,26 @@ class JobTest extends ResponseTestCase
         );
 
         $this->assertInstanceOf('Detail\FileConversion\Response\Job', $response);
-
-        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
-        Job::fromCommand($this->getCommand(array()));
     }
 
-    public function testImagesCanBeGet()
+    public function testActionsCanBeGet()
     {
-        $images = array(array('image_identifier' => 'some-image-identifier'));
-        $result = array('images' => $images);
+        $actions = array(array('identifier' => 'some-identifier'));
+        $result = array('actions' => $actions);
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($images, $response->getImages());
+        $this->assertEquals($actions, $response->getActions(true));
     }
 
-    public function testOriginalMetaCanBeGet()
+    public function testSourceMetaCanBeGet()
     {
         $meta = array(array('key' => 'value'));
-        $result = array('original_meta' => $meta);
+        $result = array('source_meta' => $meta);
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($meta, $response->getOriginalMeta());
+        $this->assertEquals($meta, $response->getSourceMeta(true));
     }
 
     /**

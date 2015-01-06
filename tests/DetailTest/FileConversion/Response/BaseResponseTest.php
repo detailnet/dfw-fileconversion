@@ -22,16 +22,6 @@ class BaseResponseTest extends ResponseTestCase
         $response->getResult('non-existing-key');
     }
 
-    public function testJobIdCanBeGet()
-    {
-        $jobId = 'some-job-id';
-        $result = array('job_id' => $jobId);
-
-        $response = $this->getResponse($result);
-
-        $this->assertEquals($jobId, $response->getJobId());
-    }
-
     public function testErrorsAreHandled()
     {
         $errorMessage = 'message';

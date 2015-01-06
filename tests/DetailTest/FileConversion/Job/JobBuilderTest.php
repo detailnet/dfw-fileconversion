@@ -45,7 +45,7 @@ class JobBuilderTest extends TestCase
         );
     }
 
-    public function provideFunctionDefinitionDefaultOptions()
+    public function provideActionDefinitionDefaultOptions()
     {
         return array(
             array(
@@ -56,20 +56,20 @@ class JobBuilderTest extends TestCase
             ),
             array(
                 array(
-                    'job.src' => 'job.src',
-                    'function.name' => 'function.name'
+                    'job.source_url' => 'job.source_url',
+                    'action.name' => 'action.name'
                 ),
                 array(
-                    'name' => 'function.name',
+                    'name' => 'action.name',
                 ),
             ),
             array(
                 array(
-                    'src' => 'src',
+                    'source_url' => 'source_url',
                     'job' => 'job',
-                    'function' => 'function',
+                    'action' => 'action',
                     'job.' => 'job.',
-                    'function.' => 'function.',
+                    'action.' => 'action.',
                 ),
                 array(
                 ),
@@ -96,18 +96,18 @@ class JobBuilderTest extends TestCase
         $this->assertEquals($class, $this->jobBuilder->getJobClass());
     }
 
-    public function testFunctionClassCanBeSet()
+    public function testActionClassCanBeSet()
     {
         $this->assertEquals(
-            'Detail\FileConversion\Job\Definition\FunctionDefinition',
-            $this->jobBuilder->getFunctionClass()
+            'Detail\FileConversion\Job\Definition\ActionDefinition',
+            $this->jobBuilder->getActionClass()
         );
 
-        $class = 'CustomFunctionDefinitionClass';
+        $class = 'CustomActionDefinitionClass';
 
-        $this->jobBuilder->setFunctionClass($class);
+        $this->jobBuilder->setActionClass($class);
 
-        $this->assertEquals($class, $this->jobBuilder->getFunctionClass());
+        $this->assertEquals($class, $this->jobBuilder->getActionClass());
     }
 
     public function testDefaultOptionCanBeSet()
@@ -145,11 +145,11 @@ class JobBuilderTest extends TestCase
         $this->assertInstanceOf('Detail\FileConversion\Job\Definition\JobDefinition', $job);
     }
 
-    public function testCanCreateFunctionDefinition()
+    public function testCanCreateActionDefinition()
     {
-        $job = $this->jobBuilder->createFunction();
+        $job = $this->jobBuilder->createAction();
 
-        $this->assertInstanceOf('Detail\FileConversion\Job\Definition\FunctionDefinition', $job);
+        $this->assertInstanceOf('Detail\FileConversion\Job\Definition\ActionDefinition', $job);
     }
 
     public function testDefinitionCreationWithMissingClassThrowsException()
@@ -186,15 +186,15 @@ class JobBuilderTest extends TestCase
     /**
      * @param array $options
      * @param array $expectedOptions
-     * @dataProvider provideFunctionDefinitionDefaultOptions
+     * @dataProvider provideActionDefinitionDefaultOptions
      */
     public function testDefaultOptionsCanBeGetForFunctionDefinition(array $options, array $expectedOptions)
     {
         $this->jobBuilder->setDefaultOptions($options);
 
-        $functionDefinition = $this->jobBuilder->createFunction();
+        $actionDefinition = $this->jobBuilder->createAction();
 
-        $this->assertEquals($expectedOptions, $this->jobBuilder->getDefaultOptions($functionDefinition));
+        $this->assertEquals($expectedOptions, $this->jobBuilder->getDefaultOptions($actionDefinition));
     }
 
     public function testDefaultOptionsAreEmptyUnknownDefinition()

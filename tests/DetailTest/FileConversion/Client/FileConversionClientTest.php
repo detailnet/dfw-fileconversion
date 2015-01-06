@@ -39,33 +39,32 @@ class FileConversionClientTest extends TestCase
         $client = FileConversionClient::factory($config, $jobBuilder);
 
         $this->assertInstanceOf('Detail\FileConversion\Client\FileConversionClient', $client);
-        $this->assertEquals($config['application_id'], $client->getDefaultOption('query')['application_id']);
         $this->assertEquals('application/json', $client->getDefaultOption('headers')['Accept']);
         $this->assertEquals('https://file-conversion.dws.detailnet.ch/api', $client->getConfig('base_url'));
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
 
-    /**
-     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
-     */
-    public function testFactoryThrowsExceptionOnMissingConfigurationOptions()
-    {
-        $config = array();
+//    /**
+//     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
+//     */
+//    public function testFactoryThrowsExceptionOnMissingConfigurationOptions()
+//    {
+//        $config = array();
+//
+//        FileConversionClient::factory($config);
+//    }
 
-        FileConversionClient::factory($config);
-    }
-
-    /**
-     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
-     */
-    public function testFactoryThrowsExceptionOnBlankConfigurationOptions()
-    {
-        $config = array(
-            'application_id' => '',
-        );
-
-        FileConversionClient::factory($config);
-    }
+//    /**
+//     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
+//     */
+//    public function testFactoryThrowsExceptionOnBlankConfigurationOptions()
+//    {
+//        $config = array(
+//            'application_id' => '',
+//        );
+//
+//        FileConversionClient::factory($config);
+//    }
 
     /**
      * @param $applicationId

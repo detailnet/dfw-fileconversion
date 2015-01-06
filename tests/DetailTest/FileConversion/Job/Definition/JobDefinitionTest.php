@@ -2,7 +2,7 @@
 
 namespace DetailTest\FileConversion\Job\Definition;
 
-use Detail\FileConversion\Job\Definition\FunctionDefinition;
+use Detail\FileConversion\Job\Definition\ActionDefinition;
 use Detail\FileConversion\Job\Definition\JobDefinition;
 
 class JobDefinitionTest extends DefinitionTestCase
@@ -25,48 +25,22 @@ class JobDefinitionTest extends DefinitionTestCase
         $this->assertEquals($url, $definition->getSourceUrl());
     }
 
-    public function testPostbackUrlCanBeSet()
+    public function testActionsCanBeSet()
     {
         $definition = $this->getDefinition();
-        $url = 'http://www.detailnet.ch/job';
-
-        $this->setMethodReturnValue($definition, 'getOption', $url);
-
-        /** @var JobDefinition $definition */
-
-        $this->assertEquals($definition, $definition->setPostbackUrl($url));
-        $this->assertEquals($url, $definition->getPostbackUrl());
-    }
-
-    public function testVersionCanBeSet()
-    {
-        $definition = $this->getDefinition();
-        $version = '1.2.3';
-
-        $this->setMethodReturnValue($definition, 'getOption', $version);
-
-        /** @var JobDefinition $definition */
-
-        $this->assertEquals($definition, $definition->setVersion($version));
-        $this->assertEquals($version, $definition->getVersion());
-    }
-
-    public function testFunctionsCanBeSet()
-    {
-        $definition = $this->getDefinition();
-        $functionOne = new FunctionDefinition();
-        $functionTwo = new FunctionDefinition();
-        $functions = array(
-            $functionOne,
-            $functionTwo,
+        $actionOne = new ActionDefinition();
+        $actionTwo = new ActionDefinition();
+        $actions = array(
+            $actionOne,
+            $actionTwo,
         );
 
-        $this->setMethodReturnValue($definition, 'getOption', $functions);
+        $this->setMethodReturnValue($definition, 'getOption', $actions);
 
         /** @var JobDefinition $definition */
 
-        $this->assertEquals($definition, $definition->setFunctions(array($functionOne)));
-        $this->assertEquals($definition, $definition->addFunction($functionTwo));
-        $this->assertEquals($functions, $definition->getFunctions());
+        $this->assertEquals($definition, $definition->setActions(array($actionOne)));
+        $this->assertEquals($definition, $definition->addAction($actionTwo));
+        $this->assertEquals($actions, $definition->getActions());
     }
 }
