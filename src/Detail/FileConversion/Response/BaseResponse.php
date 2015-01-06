@@ -55,32 +55,6 @@ abstract class BaseResponse implements
     }
 
     /**
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return !$this->isError();
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isError()
-    {
-        return $this->getError() !== null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getError()
-    {
-        $result = $this->getResult();
-
-        return isset($result['error']) ? $result['error'] : null;
-    }
-
-    /**
      * @param string $key
      * @param array $factory
      * @param bool $asPlainResult

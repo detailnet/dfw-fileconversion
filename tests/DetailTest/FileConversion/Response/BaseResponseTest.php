@@ -22,18 +22,6 @@ class BaseResponseTest extends ResponseTestCase
         $response->getResult('non-existing-key');
     }
 
-    public function testErrorsAreHandled()
-    {
-        $errorMessage = 'message';
-        $result = array('error' => $errorMessage);
-
-        $response = $this->getResponse($result);
-
-        $this->assertFalse($response->isSuccess());
-        $this->assertTrue($response->isError());
-        $this->assertEquals($errorMessage, $response->getError());
-    }
-
     /**
      * @param array $data
      * @return BaseResponse

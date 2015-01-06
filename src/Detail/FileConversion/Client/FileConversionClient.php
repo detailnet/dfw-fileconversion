@@ -32,15 +32,15 @@ class FileConversionClient extends Client
     {
         $defaultOptions = array('base_url' => 'https://file-conversion.dws.detailnet.ch/api');
 
-        $requiredOptions = array();
-
-        foreach ($requiredOptions as $optionName) {
-            if (!isset($options[$optionName]) || $options[$optionName] === '') {
-                throw new InvalidArgumentException(
-                    sprintf('Missing required configuration option "%s"', $optionName)
-                );
-            }
-        }
+//        $requiredOptions = array();
+//
+//        foreach ($requiredOptions as $optionName) {
+//            if (!isset($options[$optionName]) || $options[$optionName] === '') {
+//                throw new InvalidArgumentException(
+//                    sprintf('Missing required configuration option "%s"', $optionName)
+//                );
+//            }
+//        }
 
         $config = Collection::fromConfig($options, $defaultOptions);
 

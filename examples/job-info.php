@@ -14,8 +14,4 @@ $client = FileConversionClient::factory($config);
 
 $response = $client->fetchJob(array('job_id' => $jobId));
 
-if ($response->isError()) {
-    var_dump($response->getError());
-} else {
-    var_dump($response->getResult());
-}
+var_dump($response->getResult());
