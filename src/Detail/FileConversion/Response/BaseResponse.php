@@ -79,4 +79,69 @@ abstract class BaseResponse implements
 
         return isset($result['error']) ? $result['error'] : null;
     }
+
+    /**
+     * @param string $key
+     * @param array $factory
+     * @param bool $asPlainResult
+     * @return array|mixed
+     */
+    protected function getSubResults($key, $factory, $asPlainResult = false)
+    {
+        if ($asPlainResult === true) {
+            return $this->getResult($key);
+        }
+
+        if ($this->$key === null) {
+            $results = $this->getResult($key);
+
+            $this->$key = array();
+
+            foreach ($results as $result) {
+                $response = $this->getSubResponse($factory, $result);
+
+                array_push($this->$key, $response);
+            }
+        }
+
+        return $this->$key;
+    }
+
+    /**
+     * @param string $key
+     * @param array $factory
+     * @param bool $asPlainResult
+     * @return array|mixed
+     */
+    protected function getSubResult($key, $factory, $asPlainResult = false)
+    {
+        if ($asPlainResult === true) {
+            return $this->getResult($key);
+        }
+
+        if ($this->$key === null) {
+            $result = $this->getResult($key);
+            $response = $this->getSubResponse($factory, $result);
+
+            $this->$key = $response;
+        }
+
+        return $this->$key;
+    }
+
+    /**
+     * @param array $factory
+     * @param array $result
+     * @return ResponseInterface
+     */
+    private function getSubResponse($factory, $result)
+    {
+        /** @todo Check if factory is callable */
+
+        $response = call_user_func($factory, $result);
+
+        /** @todo Check if response is an ResponseInterface object */
+
+        return $response;
+    }
 }

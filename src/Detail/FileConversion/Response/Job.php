@@ -5,6 +5,16 @@ namespace  Detail\FileConversion\Response;
 class Job extends BaseResponse
 {
     /**
+     * @var array
+     */
+    protected $actions;
+
+    /**
+     * @var array
+     */
+    protected $results;
+
+    /**
      * @return string
      */
     public function getId()
@@ -17,7 +27,7 @@ class Job extends BaseResponse
      */
     public function getSourceUrl()
     {
-        return $this->getResult('sourceUrl');
+        return $this->getResult('source_url');
     }
 
     /**
@@ -25,7 +35,7 @@ class Job extends BaseResponse
      */
     public function getSourceMeta()
     {
-        return $this->getResult('sourceMeta');
+        return $this->getResult('source_meta');
     }
 
     /**
@@ -37,18 +47,38 @@ class Job extends BaseResponse
     }
 
     /**
+     * @param boolean $asPlainResult
      * @return array
      */
-    public function getActions()
+    public function getActions($asPlainResult = false)
     {
-        return $this->getResult('actions');
+        return $this->getSubResults('actions', array($this, 'createAction'), $asPlainResult);
     }
 
     /**
+     * @param boolean $asPlainResult
      * @return array
      */
-    public function getOutputs()
+    public function getResults($asPlainResult = false)
     {
-        return $this->getResult('results');
+        return $this->getSubResults('results', array($this, 'createResult'), $asPlainResult);
+    }
+
+    /**
+     * @param array $data
+     * @return Action
+     */
+    protected function createAction(array $data)
+    {
+        return new Action($data);
+    }
+
+    /**
+     * @param array $data
+     * @return Result
+     */
+    protected function createResult(array $data)
+    {
+        return new Result($data);
     }
 }
