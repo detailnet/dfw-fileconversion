@@ -24,7 +24,7 @@ class Action extends BaseResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return SaveOptions|array
      */
     public function getSaveOptions($asPlainResult = false)
     {
