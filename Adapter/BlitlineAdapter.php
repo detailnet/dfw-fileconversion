@@ -81,7 +81,7 @@ class BlitlineAdapter extends BaseAdapter //implements
         $client = $this->getBlitlineClient();
 
         try {
-            $response = $client->pollJob(array('jobId' => $task->getProcessId()));
+            $response = $client->pollJob(array('job_id' => $task->getProcessId()));
 
         } catch (\Exception $e) {
             throw new RuntimeException(
