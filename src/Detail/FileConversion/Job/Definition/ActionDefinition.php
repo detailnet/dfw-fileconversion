@@ -2,7 +2,8 @@
 
 namespace Detail\FileConversion\Job\Definition;
 
-class FunctionDefinition extends BaseDefinition implements FunctionDefinitionInterface
+class ActionDefinition extends BaseDefinition implements
+    ActionDefinitionInterface
 {
     const OPTION_NAME         = 'name';
     const OPTION_PARAMS       = 'params';

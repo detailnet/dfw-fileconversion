@@ -2,6 +2,6 @@
 
 return array(
     'base_url' => 'http://dws-fileconversion.public.web01.detailnet.me/api/',
-    's3bucket' => 'your-buchet-name',
+    's3bucket' => 'your-bucket-name',
     's3path' => 'test-files', // Or any other path under your bucket
 );

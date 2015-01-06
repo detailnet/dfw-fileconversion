@@ -5,7 +5,8 @@ namespace Detail\FileConversion\Job;
 use Detail\FileConversion\Exception\RuntimeException;
 use Detail\FileConversion\Job\Definition\DefinitionInterface;
 
-class JobBuilder implements JobBuilderInterface
+class JobBuilder implements
+    JobBuilderInterface
 {
     /**
      * @var string
@@ -15,7 +16,7 @@ class JobBuilder implements JobBuilderInterface
     /**
      * @var string
      */
-    protected $functionClass;
+    protected $actionClass;
 
     /**
      * @var array
@@ -43,18 +44,18 @@ class JobBuilder implements JobBuilderInterface
     /**
      * @return string
      */
-    public function getFunctionClass()
+    public function getActionClass()
     {
-        return $this->functionClass;
+        return $this->actionClass;
     }
 
     /**
-     * @param string $functionClass
+     * @param string $actionClass
      * @return JobBuilder
      */
-    public function setFunctionClass($functionClass)
+    public function setActionClass($actionClass)
     {
-        $this->functionClass = $functionClass;
+        $this->actionClass = $actionClass;
         return $this;
     }
 
@@ -92,15 +93,15 @@ class JobBuilder implements JobBuilderInterface
         }
 
         $jobInterface      = $this->getDefinitonFqcn('JobDefinitionInterface');
-        $functionInterface = $this->getDefinitonFqcn('FunctionDefinitionInterface');
+        $actionInterface = $this->getDefinitonFqcn('ActionDefinitionInterface');
 
         $prefix = null;
         $prefixSeparator = '.';
 
         if ($definition instanceof $jobInterface) {
             $prefix = 'job';
-        } elseif ($definition instanceof $functionInterface) {
-            $prefix = 'function';
+        } elseif ($definition instanceof $actionInterface) {
+            $prefix = 'action';
         } else {
             return array();
         }
@@ -139,7 +140,7 @@ class JobBuilder implements JobBuilderInterface
     {
         // Set default definition classes
         $this->setJobClass($this->getDefinitonFqcn('JobDefinition'));
-        $this->setFunctionClass($this->getDefinitonFqcn('FunctionDefinition'));
+        $this->setActionClass($this->getDefinitonFqcn('ActionDefinition'));
     }
 
     /**
@@ -156,11 +157,11 @@ class JobBuilder implements JobBuilderInterface
     /**
      * @inheritdoc
      */
-    public function createFunction()
+    public function createAction()
     {
         return $this->createDefinition(
-            $this->getFunctionClass(),
-            $this->getDefinitonFqcn('FunctionDefinitionInterface')
+            $this->getActionClass(),
+            $this->getDefinitonFqcn('ActionDefinitionInterface')
         );
     }
 

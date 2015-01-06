@@ -27,31 +27,31 @@ $client = FileConversionClient::factory($config);
 /** @var \Detail\FileConversion\Job\JobBuilder $jobBuilder */
 $jobBuilder = $client->getJobBuilder();
 $jobBuilder->setDefaultOption(
-    'function.save',
+    'action.save',
     array(
-        's3_destination' => array(
+        'type' => 's3',
+        'params' => array(
             'bucket' => $getConfig('s3bucket'),
-//            'key' => $getConfig('s3path') . '/' . $imageName . '-' . $imageSize . '_dfw-fileconversion.jpg',
         ),
     )
 );
 
 $job = $jobBuilder->createJob()
     ->setSourceUrl($imageUrl)
-    ->addFunction(
-        $jobBuilder->createFunction()
+    ->addAction(
+        $jobBuilder->createAction()
             ->setName('resize_to_fit')
             ->setParams(
                 array(
                     'width' => $imageSize,
                     'height' => $imageSize,
-                    'only_shrink_larger' => true, // Don't upscale image
+//                    'only_shrink_larger' => true, // Don't upscale image
                 )
             )
             ->setSaveOptions(
                 array(
-                    'image_identifier' => $imageName,
-                    's3_destination' => array(
+                    'identifier' => $imageName,
+                    'params' => array(
 //                        'bucket' => $getConfig('s3bucket'),
                         'key' => $getConfig('s3path') . '/' . $imageName . '-' . $imageSize . '_dfw-fileconversion.jpg',
                     ),
@@ -59,10 +59,6 @@ $job = $jobBuilder->createJob()
                 true // Merge with defaults
             )
     );
-
-if (isset($config['version'])) {
-    $job->setVersion($config['version']);
-}
 
 $response = $client->createJob($job);
 

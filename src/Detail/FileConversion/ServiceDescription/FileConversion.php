@@ -41,12 +41,12 @@ return array(
         ),
         'createJob' => array(
             'httpMethod'       => 'POST',
-            'uri'              => 'job',
+            'uri'              => 'jobs',
             'summary'          => 'Create a new job',
 //            'documentationUrl' => 'http://tbd',
             'parameters'       => array(
-                'src' => array(
-                    'description' => 'The location of the image you wish to process',
+                'source_url' => array(
+                    'description' => 'The location of the file you wish to convert',
                     'location'    => 'json',
                     'type'        => 'string',
                     'required'    => true,

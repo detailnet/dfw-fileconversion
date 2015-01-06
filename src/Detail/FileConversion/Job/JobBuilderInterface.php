@@ -10,7 +10,7 @@ interface JobBuilderInterface
     public function createJob();
 
     /**
-     * @return Definition\FunctionDefinitionInterface
+     * @return Definition\ActionDefinitionInterface
      */
-    public function createFunction();
+    public function createAction();
 }

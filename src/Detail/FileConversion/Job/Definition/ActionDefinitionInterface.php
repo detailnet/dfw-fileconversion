@@ -2,11 +2,11 @@
 
 namespace Detail\FileConversion\Job\Definition;
 
-interface FunctionDefinitionInterface extends DefinitionInterface
+interface ActionDefinitionInterface extends DefinitionInterface
 {
     /**
      * @param string $name
-     * @return FunctionDefinitionInterface
+     * @return ActionDefinitionInterface
      */
     public function setName($name);
 
@@ -17,7 +17,7 @@ interface FunctionDefinitionInterface extends DefinitionInterface
 
     /**
      * @param array $params
-     * @return FunctionDefinitionInterface
+     * @return ActionDefinitionInterface
      */
     public function setParams(array $params);
 
@@ -28,7 +28,7 @@ interface FunctionDefinitionInterface extends DefinitionInterface
 
     /**
      * @param array $saveOptions
-     * @return FunctionDefinitionInterface
+     * @return ActionDefinitionInterface
      */
     public function setSaveOptions(array $saveOptions);
 
