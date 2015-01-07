@@ -109,8 +109,6 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         }
 
-        var_dump($result->g)
-
         if ($response->isSuccess()) {
             $outputs = array();
 
