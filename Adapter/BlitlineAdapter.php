@@ -120,6 +120,8 @@ class BlitlineAdapter extends BaseAdapter //implements
                 );
             }
 
+            /** @todo We should probably fail when there are not outputs... */
+
             $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
         } else {
             $result = new Task\ErrorResult($task, $response->getError());
