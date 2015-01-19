@@ -70,7 +70,7 @@ abstract class BaseResponse implements
     {
         $date = $this->getResult($key, $failOnNull);
 
-        return $date !== null ? new DateTime($date) : null;
+        return ($date !== null) ? new DateTime($date) : null;
     }
 
     /**
@@ -91,10 +91,12 @@ abstract class BaseResponse implements
         if ($this->$key === null) {
             $this->$key = array();
 
-            foreach ($results as $result) {
-                $response = $this->getSubResponse($factory, $result);
+            if (is_array($results)) {
+                foreach ($results as $result) {
+                    $response = $this->getSubResponse($factory, $result);
 
-                array_push($this->$key, $response);
+                    array_push($this->$key, $response);
+                }
             }
         }
 

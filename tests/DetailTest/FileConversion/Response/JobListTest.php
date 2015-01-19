@@ -46,13 +46,20 @@ class JobListTest extends ResponseTestCase
         $this->assertEquals($result['page_size'], $response->getPageSize());
         $this->assertEquals(count($responseJobs), $response->getItemCount());
         $this->assertEquals($result['total_items'], $response->getTotalItemCount());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getPageCount();
+
+        /** @todo Handle expected exceptions for other methods... */
     }
 
     /**
      * @param array $data
      * @return JobList
      */
-    protected function getResponse(array $data)
+    protected function getResponse(array $data = array())
     {
         return parent::getResponse('Detail\FileConversion\Response\JobList', $data);
     }

@@ -2,7 +2,7 @@
 
 namespace DetailTest\FileConversion\Job\Definition;
 
-use Detail\FileConversion\Job\Definition\ActionDefinition;
+use Detail\FileConversion\Job\Definition\NotificationDefinition;
 
 class NotificationDefinitionTest extends DefinitionTestCase
 {
@@ -18,7 +18,7 @@ class NotificationDefinitionTest extends DefinitionTestCase
 
         $this->setMethodReturnValue($definition, 'getOption', $type);
 
-        /** @var ActionDefinition $definition */
+        /** @var NotificationDefinition $definition */
 
         $this->assertEquals($definition, $definition->setType($type));
         $this->assertEquals($type, $definition->getType());
@@ -31,7 +31,7 @@ class NotificationDefinitionTest extends DefinitionTestCase
 
         $this->setMethodReturnValue($definition, 'getOption', $params);
 
-        /** @var ActionDefinition $definition */
+        /** @var NotificationDefinition $definition */
 
         $this->assertEquals($definition, $definition->setParams($params));
         $this->assertEquals($params, $definition->getParams());

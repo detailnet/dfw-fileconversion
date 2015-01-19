@@ -23,6 +23,11 @@ class ResultTest extends ResponseTestCase
         $response = $this->getResponse($result);
 
         $this->assertEquals($id, $response->getId());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getId();
     }
 
     public function testIdentifierCanBeGet()
@@ -33,6 +38,10 @@ class ResultTest extends ResponseTestCase
         $response = $this->getResponse($result);
 
         $this->assertEquals($identifier, $response->getIdentifier());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->assertNull($emptyResponse->getIdentifier());
     }
 
     public function testUrlCanBeGet()
@@ -43,6 +52,11 @@ class ResultTest extends ResponseTestCase
         $response = $this->getResponse($result);
 
         $this->assertEquals($url, $response->getUrl());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getUrl();
     }
 
     public function testMetaCanBeGet()
@@ -54,13 +68,18 @@ class ResultTest extends ResponseTestCase
 
         $this->assertTrue(is_array($response->getMeta()));
         $this->assertEquals($params, $response->getMeta());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getMeta();
     }
 
     /**
      * @param array $data
      * @return Result
      */
-    protected function getResponse(array $data)
+    protected function getResponse(array $data = array())
     {
         return parent::getResponse('Detail\FileConversion\Response\Result', $data);
     }

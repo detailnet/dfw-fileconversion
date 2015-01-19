@@ -15,7 +15,7 @@ class NotificationCall extends BaseResponse
     /**
      * @return boolean
      */
-    public function getSuccess()
+    public function isSuccess()
     {
         return (boolean) $this->getResult('success');
     }
