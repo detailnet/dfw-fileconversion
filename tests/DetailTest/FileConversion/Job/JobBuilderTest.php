@@ -131,8 +131,6 @@ class JobBuilderTest extends TestCase
     {
         $options = array('key' => 'value');
 
-        $this->assertEmpty($this->jobBuilder->getDefaultOptions());
-
         $this->jobBuilder->setDefaultOptions($options);
 
         $this->assertEquals($options, $this->jobBuilder->getDefaultOptions());

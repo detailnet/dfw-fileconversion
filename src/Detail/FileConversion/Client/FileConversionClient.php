@@ -6,7 +6,7 @@ use Guzzle\Common\Collection;
 use Guzzle\Service\Client;
 use Guzzle\Service\Description\ServiceDescription;
 
-use Detail\FileConversion\Exception\InvalidArgumentException;
+//use Detail\FileConversion\Exception\InvalidArgumentException;
 use Detail\FileConversion\Job\Definition\DefinitionInterface;
 use Detail\FileConversion\Job\JobBuilder;
 use Detail\FileConversion\Job\JobBuilderInterface;
@@ -21,7 +21,7 @@ use Detail\FileConversion\Response;
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.1.0';
+    const CLIENT_VERSION = '0.2.0';
 
     /**
      * @var JobBuilderInterface

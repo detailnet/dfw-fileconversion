@@ -5,12 +5,13 @@ namespace Detail\FileConversion\Job\Definition;
 class JobDefinition extends BaseDefinition implements
     JobDefinitionInterface
 {
-    const OPTION_SOURCE_URL       = 'source_url';
-//    const OPTION_POSTBACK_URL = 'postback_url';
-    const OPTION_ACTIONS    = 'actions';
+    const OPTION_SOURCE_URL    = 'source_url';
+    const OPTION_ACTIONS       = 'actions';
+    const OPTION_NOTIFICATIONS = 'notifications';
 
     protected $options = array(
         self::OPTION_ACTIONS => array(),
+        self::OPTION_NOTIFICATIONS => array(),
     );
 
     /**
@@ -29,24 +30,6 @@ class JobDefinition extends BaseDefinition implements
     {
         return $this->getOption(self::OPTION_SOURCE_URL);
     }
-
-//    /**
-//     * @param string $url
-//     * @return JobDefinitionInterface
-//     */
-//    public function setPostbackUrl($url)
-//    {
-//        $this->setOption(self::OPTION_POSTBACK_URL, $url);
-//        return $this;
-//    }
-//
-//    /**
-//     * @return string
-//     */
-//    public function getPostbackUrl()
-//    {
-//        return $this->getOption(self::OPTION_POSTBACK_URL);
-//    }
 
     /**
      * @inheritdoc
@@ -73,6 +56,34 @@ class JobDefinition extends BaseDefinition implements
     {
         /** @todo Check that is array or ActionDefinition object */
         $this->setActions(array($action)); // Will get merged with existing actions
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setNotifications(array $notifications)
+    {
+        /** @todo Check that array contains valid notifications */
+        $this->setOption(self::OPTION_NOTIFICATIONS, $notifications);
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNotifications()
+    {
+        return $this->getOption(self::OPTION_NOTIFICATIONS);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addNotification($notification)
+    {
+        /** @todo Check that is array or NotificationDefinition object */
+        $this->setNotifications(array($notification)); // Will get merged with existing notifications
         return $this;
     }
 }
