@@ -4,6 +4,7 @@ namespace DetailTest\FileConversion\Job\Definition;
 
 use Detail\FileConversion\Job\Definition\ActionDefinition;
 use Detail\FileConversion\Job\Definition\JobDefinition;
+use Detail\FileConversion\Job\Definition\NotificationDefinition;
 
 class JobDefinitionTest extends DefinitionTestCase
 {
@@ -42,5 +43,24 @@ class JobDefinitionTest extends DefinitionTestCase
         $this->assertEquals($definition, $definition->setActions(array($actionOne)));
         $this->assertEquals($definition, $definition->addAction($actionTwo));
         $this->assertEquals($actions, $definition->getActions());
+    }
+
+    public function testNotificationsCanBeSet()
+    {
+        $definition = $this->getDefinition();
+        $notificationOne = new NotificationDefinition();
+        $notificationTwo = new NotificationDefinition();
+        $notifications = array(
+            $notificationOne,
+            $notificationTwo,
+        );
+
+        $this->setMethodReturnValue($definition, 'getOption', $notifications);
+
+        /** @var JobDefinition $definition */
+
+        $this->assertEquals($definition, $definition->setNotifications(array($notificationOne)));
+        $this->assertEquals($definition, $definition->addNotification($notificationTwo));
+        $this->assertEquals($notifications, $definition->getNotifications());
     }
 }

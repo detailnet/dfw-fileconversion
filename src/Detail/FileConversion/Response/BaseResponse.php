@@ -1,6 +1,8 @@
 <?php
 
-namespace  Detail\FileConversion\Response;
+namespace Detail\FileConversion\Response;
+
+use DateTime;
 
 use Detail\FileConversion\Exception\RuntimeException;
 
@@ -37,15 +39,20 @@ abstract class BaseResponse implements
 
     /**
      * @param string $key
-     * @return array|mixed
+     * @param boolean $failOnNull
+     * @return array|mixed|null
      */
-    public function getResult($key = null)
+    public function getResult($key = null, $failOnNull = true)
     {
         $result = $this->result;
 
         if ($key !== null) {
-            if (!isset($result[$key])) {
-                throw new RuntimeException(sprintf('Result does not contain "%s"', $key));
+            if (!array_key_exists($key, $result)) {
+                if ($failOnNull !== false) {
+                    throw new RuntimeException(sprintf('Result does not contain "%s"', $key));
+                } else {
+                    return null;
+                }
             }
 
             $result = $result[$key];
@@ -56,25 +63,40 @@ abstract class BaseResponse implements
 
     /**
      * @param string $key
+     * @param boolean $failOnNull
+     * @return DateTime|null
+     */
+    public function getDateResult($key, $failOnNull = true)
+    {
+        $date = $this->getResult($key, $failOnNull);
+
+        return ($date !== null) ? new DateTime($date) : null;
+    }
+
+    /**
+     * @param string $key
      * @param array $factory
      * @param bool $asPlainResult
+     * @param boolean $failOnNull
      * @return array|mixed
      */
-    protected function getSubResults($key, $factory, $asPlainResult = false)
+    protected function getSubResults($key, $factory, $asPlainResult = false, $failOnNull = true)
     {
+        $results = $this->getResult($key, $failOnNull);
+
         if ($asPlainResult === true) {
-            return $this->getResult($key);
+            return $results;
         }
 
         if ($this->$key === null) {
-            $results = $this->getResult($key);
-
             $this->$key = array();
 
-            foreach ($results as $result) {
-                $response = $this->getSubResponse($factory, $result);
+            if (is_array($results)) {
+                foreach ($results as $result) {
+                    $response = $this->getSubResponse($factory, $result);
 
-                array_push($this->$key, $response);
+                    array_push($this->$key, $response);
+                }
             }
         }
 
@@ -85,16 +107,18 @@ abstract class BaseResponse implements
      * @param string $key
      * @param array $factory
      * @param bool $asPlainResult
+     * @param boolean $failOnNull
      * @return array|mixed
      */
-    protected function getSubResult($key, $factory, $asPlainResult = false)
+    protected function getSubResult($key, $factory, $asPlainResult = false, $failOnNull = true)
     {
+        $result = $this->getResult($key, $failOnNull);
+
         if ($asPlainResult === true) {
-            return $this->getResult($key);
+            return $result;
         }
 
-        if ($this->$key === null) {
-            $result = $this->getResult($key);
+        if ($this->$key === null && $result !== null) {
             $response = $this->getSubResponse($factory, $result);
 
             $this->$key = $response;

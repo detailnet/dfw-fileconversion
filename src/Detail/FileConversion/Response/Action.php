@@ -1,9 +1,12 @@
 <?php
 
-namespace  Detail\FileConversion\Response;
+namespace Detail\FileConversion\Response;
 
 class Action extends BaseResponse
 {
+    /**
+     * @var array
+     */
     protected $save;
 
     /**
@@ -28,7 +31,7 @@ class Action extends BaseResponse
      */
     public function getSaveOptions($asPlainResult = false)
     {
-        return $this->getSubResult('save', array($this, 'createSaveOptions'), $asPlainResult);
+        return $this->getSubResult('save', array($this, 'createSaveOptions'), $asPlainResult, false);
     }
 
     /**

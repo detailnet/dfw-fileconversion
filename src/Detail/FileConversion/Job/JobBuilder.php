@@ -19,9 +19,16 @@ class JobBuilder implements
     protected $actionClass;
 
     /**
+     * @var string
+     */
+    protected $notificationClass;
+
+    /**
      * @var array
      */
-    protected $defaultOptions = array();
+    protected $defaultOptions = array(
+        'notification.type' => 'webhook',
+    );
 
     /**
      * @return string
@@ -60,6 +67,24 @@ class JobBuilder implements
     }
 
     /**
+     * @return string
+     */
+    public function getNotificationClass()
+    {
+        return $this->notificationClass;
+    }
+
+    /**
+     * @param string $notificationClass
+     * @return JobBuilder
+     */
+    public function setNotificationClass($notificationClass)
+    {
+        $this->notificationClass = $notificationClass;
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @param mixed $default
      * @return mixed
@@ -92,8 +117,9 @@ class JobBuilder implements
             return $options;
         }
 
-        $jobInterface      = $this->getDefinitonFqcn('JobDefinitionInterface');
-        $actionInterface = $this->getDefinitonFqcn('ActionDefinitionInterface');
+        $jobInterface          = $this->getDefinitonFqcn('JobDefinitionInterface');
+        $actionInterface       = $this->getDefinitonFqcn('ActionDefinitionInterface');
+        $notificationInterface = $this->getDefinitonFqcn('NotificationDefinitionInterface');
 
         $prefix = null;
         $prefixSeparator = '.';
@@ -102,6 +128,8 @@ class JobBuilder implements
             $prefix = 'job';
         } elseif ($definition instanceof $actionInterface) {
             $prefix = 'action';
+        } elseif ($definition instanceof $notificationInterface) {
+            $prefix = 'notification';
         } else {
             return array();
         }
@@ -141,6 +169,7 @@ class JobBuilder implements
         // Set default definition classes
         $this->setJobClass($this->getDefinitonFqcn('JobDefinition'));
         $this->setActionClass($this->getDefinitonFqcn('ActionDefinition'));
+        $this->setNotificationClass($this->getDefinitonFqcn('NotificationDefinition'));
     }
 
     /**
@@ -162,6 +191,17 @@ class JobBuilder implements
         return $this->createDefinition(
             $this->getActionClass(),
             $this->getDefinitonFqcn('ActionDefinitionInterface')
+        );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createNotification()
+    {
+        return $this->createDefinition(
+            $this->getNotificationClass(),
+            $this->getDefinitonFqcn('NotificationDefinitionInterface')
         );
     }
 

@@ -23,6 +23,10 @@ class SaveOptionsTest extends ResponseTestCase
         $response = $this->getResponse($result);
 
         $this->assertEquals($identifier, $response->getIdentifier());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->assertNull($emptyResponse->getIdentifier());
     }
 
     public function testTypeCanBeGet()
@@ -33,6 +37,11 @@ class SaveOptionsTest extends ResponseTestCase
         $response = $this->getResponse($result);
 
         $this->assertEquals($type, $response->getType());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getType();
     }
 
     public function testParamsCanBeGet()
@@ -44,13 +53,18 @@ class SaveOptionsTest extends ResponseTestCase
 
         $this->assertTrue(is_array($response->getParams()));
         $this->assertEquals($params, $response->getParams());
+
+        $emptyResponse = $this->getResponse();
+
+        $this->setExpectedException('Detail\FileConversion\Exception\RuntimeException');
+        $emptyResponse->getParams();
     }
 
     /**
      * @param array $data
      * @return SaveOptions
      */
-    protected function getResponse(array $data)
+    protected function getResponse(array $data = array())
     {
         return parent::getResponse('Detail\FileConversion\Response\SaveOptions', $data);
     }

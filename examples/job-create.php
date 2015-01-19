@@ -58,6 +58,15 @@ $job = $jobBuilder->createJob()
                 ),
                 true // Merge with defaults
             )
+    )
+    ->addNotification(
+        $jobBuilder->createNotification()
+//            ->setType('webhook')
+            ->setParams(
+                array(
+                    'url' => 'http://requestb.in/12mcl541',
+                )
+            )
     );
 
 $response = $client->createJob($job);

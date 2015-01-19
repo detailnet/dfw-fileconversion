@@ -1,6 +1,6 @@
 <?php
 
-namespace  Detail\FileConversion\Response;
+namespace Detail\FileConversion\Response;
 
 class Result extends BaseResponse
 {
@@ -17,7 +17,7 @@ class Result extends BaseResponse
      */
     public function getIdentifier()
     {
-        return $this->getResult('identifier');
+        return $this->getResult('identifier', false);
     }
 
     /**

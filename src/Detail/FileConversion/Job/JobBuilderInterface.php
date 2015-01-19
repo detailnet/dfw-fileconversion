@@ -13,4 +13,9 @@ interface JobBuilderInterface
      * @return Definition\ActionDefinitionInterface
      */
     public function createAction();
+
+    /**
+     * @return Definition\NotificationDefinitionInterface
+     */
+    public function createNotification();
 }

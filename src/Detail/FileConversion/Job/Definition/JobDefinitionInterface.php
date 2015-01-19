@@ -15,17 +15,6 @@ interface JobDefinitionInterface extends DefinitionInterface
      */
     public function getSourceUrl();
 
-//    /**
-//     * @param string $url
-//     * @return JobDefinitionInterface
-//     */
-//    public function setPostbackUrl($url);
-//
-//    /**
-//     * @return string
-//     */
-//    public function getPostbackUrl();
-
     /**
      * @param array|ActionDefinitionInterface[] $actions
      * @return JobDefinitionInterface
@@ -42,4 +31,21 @@ interface JobDefinitionInterface extends DefinitionInterface
      * @return JobDefinitionInterface
      */
     public function addAction($actions);
+
+    /**
+     * @param array|NotificationDefinitionInterface[] $notifications
+     * @return JobDefinitionInterface
+     */
+    public function setNotifications(array $notifications);
+
+    /**
+     * @return array|NotificationDefinitionInterface[]
+     */
+    public function getNotifications();
+
+    /**
+     * @param array|NotificationDefinitionInterface $notification
+     * @return JobDefinitionInterface
+     */
+    public function addNotification($notification);
 }
