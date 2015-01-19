@@ -1,6 +1,6 @@
 <?php
 
-namespace  Detail\FileConversion\Response;
+namespace Detail\FileConversion\Response;
 
 abstract class ListResponse extends BaseResponse implements
     ListResponseInterface

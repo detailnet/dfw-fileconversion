@@ -1,6 +1,6 @@
 <?php
 
-namespace  Detail\FileConversion\Response;
+namespace Detail\FileConversion\Response;
 
 class SaveOptions extends BaseResponse
 {
@@ -9,7 +9,7 @@ class SaveOptions extends BaseResponse
      */
     public function getIdentifier()
     {
-        return $this->getResult('identifier');
+        return $this->getResult('identifier', false);
     }
 
     /**
