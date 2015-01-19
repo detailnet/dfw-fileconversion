@@ -145,9 +145,17 @@ class JobBuilderTest extends TestCase
 
     public function testCanCreateActionDefinition()
     {
-        $job = $this->jobBuilder->createAction();
+        $action = $this->jobBuilder->createAction();
 
-        $this->assertInstanceOf('Detail\FileConversion\Job\Definition\ActionDefinition', $job);
+        $this->assertInstanceOf('Detail\FileConversion\Job\Definition\ActionDefinition', $action);
+    }
+
+    public function testCanCreateNotificationDefinition()
+    {
+        $notification = $this->jobBuilder->createNotification();
+
+        $this->assertInstanceOf('Detail\FileConversion\Job\Definition\NotificationDefinition', $notification);
+        $this->assertEquals('webhook', $notification->getType());
     }
 
     public function testDefinitionCreationWithMissingClassThrowsException()
