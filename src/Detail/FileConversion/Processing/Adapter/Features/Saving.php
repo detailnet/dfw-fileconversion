@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter\Features;
+namespace Detail\FileConversion\Processing\Adapter\Features;
 
 interface Saving
 {

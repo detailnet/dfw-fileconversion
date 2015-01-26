@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter;
 
 abstract class BaseAdapter implements
     AdapterInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing;
+namespace Detail\FileConversion\Processing;
 
 class JobProcessor implements
     JobProcessorInterface
@@ -41,7 +41,7 @@ class JobProcessor implements
     public function process(Task\TaskInterface $task)
     {
         // TODO: Implement process() method.
-        throw new \Exception('Not yet implemented');
+        throw new Exception\RuntimeException('Not yet implemented');
     }
 
     /**

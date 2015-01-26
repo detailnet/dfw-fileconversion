@@ -1,8 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Task;
-
-use Application\Job\Domain\Model\Job;
+namespace Detail\FileConversion\Processing\Task;
 
 class Task implements
     TaskInterface
@@ -10,11 +8,6 @@ class Task implements
     const PRIORITY_LOW    = -1;
     const PRIORITY_NORMAL = 0;
     const PRIORITY_HIGH   = 1;
-
-    /**
-     * @var Job
-     */
-    protected $job;
 
     /**
      * @var string
@@ -27,37 +20,13 @@ class Task implements
     protected $priority = self::PRIORITY_NORMAL;
 
     /**
-     * @param Job $job
-     * @param int $priority
-     * @return Task
-     */
-    public static function fromJob(Job $job, $priority = null)
-    {
-        $task = new static($job, $priority);
-        $task->setProcessId($job->getProcessId());
-
-        return $task;
-    }
-
-    /**
-     * @param Job $job
      * @param int $priority
      */
-    public function __construct(Job $job, $priority = null)
+    public function __construct($priority = null)
     {
-        $this->job = $job;
-
         if ($priority !== null) {
             $this->priority = $priority;
         }
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob()
-    {
-        return $this->job;
     }
 
     /**

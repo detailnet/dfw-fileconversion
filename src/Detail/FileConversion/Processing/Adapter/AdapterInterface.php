@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter;
 
-use Application\Job\Application\JobProcessing\Task;
+use Detail\FileConversion\Processing\Task;
 
 interface AdapterInterface
 {

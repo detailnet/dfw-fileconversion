@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing;
+namespace Detail\FileConversion\Processing;
 
 interface JobProcessorInterface
 {

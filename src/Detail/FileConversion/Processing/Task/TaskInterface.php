@@ -1,16 +1,9 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Task;
-
-use Application\Job\Domain\Model\Job;
+namespace Detail\FileConversion\Processing\Task;
 
 interface TaskInterface
 {
-    /**
-     * @return Job
-     */
-    public function getJob();
-
     /**
      * @return string
      */

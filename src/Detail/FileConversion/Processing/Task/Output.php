@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Task;
+namespace Detail\FileConversion\Processing\Task;
 
 class Output //implements
 //    OutputInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Task;
+namespace Detail\FileConversion\Processing\Task;
 
 abstract class BaseResult implements
     ResultInterface

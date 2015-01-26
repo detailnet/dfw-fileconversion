@@ -1,13 +1,12 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter;
 
 use Detail\Blitline\Client\BlitlineClient;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
-use Application\Job\Application\JobProcessing\Task;
-use Application\Job\Domain\Exception\RuntimeException;
-
+use Detail\FileConversion\Processing\Task;
+use Detail\FileConversion\Processing\Exception;
 
 class BlitlineAdapter extends BaseAdapter //implements
 //    Features\Polling,
@@ -64,7 +63,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             return $response->getJobId();
 
         } catch (\Exception $e) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 sprintf('Blitline API request failed: %s', $e->getMessage()),
                 0,
                 $e
@@ -84,7 +83,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             $response = $client->pollJob(array('job_id' => $task->getProcessId()));
 
         } catch (\Exception $e) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 sprintf('Blitline API request failed: %s', $e->getMessage()),
                 0,
                 $e
@@ -104,7 +103,7 @@ class BlitlineAdapter extends BaseAdapter //implements
         if (is_array($response)) {
             $response = $this->getBlitlineJobProcessedResponse($response);
         } else if (!$response instanceof BlitlineJobProcessedResponse) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
             );
         }
@@ -179,7 +178,7 @@ class BlitlineAdapter extends BaseAdapter //implements
                     $saveOptionsData['s3_destination'] = $saveOptions->getParams();
                     break;
                 default:
-                    throw new RuntimeException(
+                    throw new Exception\RuntimeException(
                         sprintf(
                             'Adapter does not support save options type "%s"',
                             $saveOptions->getType()
@@ -206,7 +205,7 @@ class BlitlineAdapter extends BaseAdapter //implements
     protected function getBlitlineJobProcessedResponse(array $response)
     {
         if (!isset($response['results']) || !is_array($response['results'])) {
-            throw new RuntimeException('Unexpected response format; contains no result');
+            throw new Exception\RuntimeException('Unexpected response format; contains no result');
         }
 
         return new BlitlineJobProcessedResponse($response['results']);

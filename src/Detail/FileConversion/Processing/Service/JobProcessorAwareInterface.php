@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Job\Application\JobProcessing\Service;
+namespace Detail\FileConversion\Processing\Service;
 
-use Application\Job\Application\JobProcessing\JobProcessorInterface;
+use Detail\FileConversion\Processing\JobProcessorInterface;
 
 interface JobProcessorAwareInterface
 {
