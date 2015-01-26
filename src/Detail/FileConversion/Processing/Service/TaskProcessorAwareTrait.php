@@ -14,7 +14,7 @@ trait TaskProcessorAwareTrait
     /**
      * @return TaskProcessorInterface
      */
-    public function getJobProcessor()
+    public function getTaskProcessor()
     {
         return $this->taskProcessor;
     }
@@ -22,7 +22,7 @@ trait TaskProcessorAwareTrait
     /**
      * @param TaskProcessorInterface $taskProcessor
      */
-    public function setJobProcessor(TaskProcessorInterface $taskProcessor)
+    public function setTaskProcessor(TaskProcessorInterface $taskProcessor)
     {
         $this->taskProcessor = $taskProcessor;
     }
