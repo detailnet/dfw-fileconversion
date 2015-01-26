@@ -11,7 +11,7 @@ class JobList extends ListResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return Job[]|array
      */
     public function getItems($asPlainResult = false)
     {
@@ -20,7 +20,7 @@ class JobList extends ListResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return Job[]|array
      */
     protected function getJobs($asPlainResult = false)
     {

@@ -39,10 +39,10 @@ return array(
             ),
             'responseClass' => 'Detail\FileConversion\Client\Response\Job',
         ),
-        'createJob' => array(
+        'submitJob' => array(
             'httpMethod'       => 'POST',
             'uri'              => 'jobs',
-            'summary'          => 'Create a new job',
+            'summary'          => 'Submit a new job',
 //            'documentationUrl' => 'http://tbd',
             'parameters'       => array(
                 'source_url' => array(

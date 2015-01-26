@@ -63,7 +63,7 @@ class Job extends BaseResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return Action[]|array
      */
     public function getActions($asPlainResult = false)
     {
@@ -80,7 +80,7 @@ class Job extends BaseResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return Notification[]|array
      */
     public function getNotifications($asPlainResult = false)
     {
@@ -97,7 +97,7 @@ class Job extends BaseResponse
 
     /**
      * @param boolean $asPlainResult
-     * @return array
+     * @return Result[]|array
      */
     public function getResults($asPlainResult = false)
     {

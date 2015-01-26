@@ -17,11 +17,11 @@ use Detail\FileConversion\Client\Response;
  *
  * @method Response\JobList listJobs(array $params = array())
  * @method Response\Job fetchJob(array $params = array())
- * @method Response\Job createJob(mixed $job = array())
+ * @method Response\Job submitJob(mixed $job = array())
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.2.0';
+    const CLIENT_VERSION = '0.3.0';
 
     /**
      * @var JobBuilderInterface

@@ -19,59 +19,57 @@ class BlitlineAdapter extends BaseAdapter //implements
     /**
      * @var BlitlineClient
      */
-    protected $blitlineClient;
+    protected $client;
 
     /**
      * @var BlitlineJobCreatorInterface
      */
-    protected $blitlineJobCreator;
+    protected $jobCreator;
 
     /**
-     * @param BlitlineClient $blitlineClient
-     * @param BlitlineJobCreatorInterface $blitlineJobCreator
+     * @param BlitlineClient $client
+     * @param BlitlineJobCreatorInterface $jobCreator
      * @param array $options
      */
     public function __construct(
-        BlitlineClient $blitlineClient,
-        BlitlineJobCreatorInterface $blitlineJobCreator,
-        array $options = array()
+        BlitlineClient $client, BlitlineJobCreatorInterface $jobCreator, array $options = array()
     ) {
         parent::__construct($options);
 
-        $this->setBlitlineClient($blitlineClient);
-        $this->setBlitlineJobCreator($blitlineJobCreator);
+        $this->setClient($client);
+        $this->setJobCreator($jobCreator);
     }
 
     /**
      * @return BlitlineClient
      */
-    public function getBlitlineClient()
+    public function getClient()
     {
-        return $this->blitlineClient;
+        return $this->client;
     }
 
     /**
-     * @param BlitlineClient $blitlineClient
+     * @param BlitlineClient $client
      */
-    public function setBlitlineClient(BlitlineClient $blitlineClient)
+    public function setClient(BlitlineClient $client)
     {
-        $this->blitlineClient = $blitlineClient;
+        $this->client = $client;
     }
 
     /**
      * @return BlitlineJobCreatorInterface
      */
-    public function getBlitlineJobCreator()
+    public function getJobCreator()
     {
-        return $this->blitlineJobCreator;
+        return $this->jobCreator;
     }
 
     /**
-     * @param BlitlineJobCreatorInterface $blitlineJobCreator
+     * @param BlitlineJobCreatorInterface $jobCreator
      */
-    public function setBlitlineJobCreator(BlitlineJobCreatorInterface $blitlineJobCreator)
+    public function setJobCreator(BlitlineJobCreatorInterface $jobCreator)
     {
-        $this->blitlineJobCreator = $blitlineJobCreator;
+        $this->jobCreator = $jobCreator;
     }
 
     /**
@@ -82,7 +80,7 @@ class BlitlineAdapter extends BaseAdapter //implements
     {
         $job = $this->createBlitlineJob($task);
 
-        $client = $this->getBlitlineClient();
+        $client = $this->getClient();
 
         try {
             $response = $client->submitJob($job);
@@ -103,7 +101,7 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     public function checkProcessing(Task\TaskInterface $task)
     {
-        $client = $this->getBlitlineClient();
+        $client = $this->getClient();
 
         try {
             $response = $client->pollJob(array('job_id' => $task->getProcessId()));
@@ -127,7 +125,7 @@ class BlitlineAdapter extends BaseAdapter //implements
     public function endProcessing(Task\TaskInterface $task, $response)
     {
         if (is_array($response)) {
-            $response = $this->getBlitlineJobProcessedResponse($response);
+            $response = $this->getJobProcessedResponse($response);
         } else if (!$response instanceof BlitlineJobProcessedResponse) {
             throw new Exception\RuntimeException(
                 'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
@@ -145,7 +143,7 @@ class BlitlineAdapter extends BaseAdapter //implements
                 );
             }
 
-            /** @todo We should probably fail when there are not outputs... */
+            /** @todo We should probably fail when there are no outputs... */
 
             $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
         } else {
@@ -181,7 +179,7 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     protected function createBlitlineJob(Task\TaskInterface $task)
     {
-        $jobCreator = $this->getBlitlineJobCreator();
+        $jobCreator = $this->getJobCreator();
 
         if ($jobCreator === null) {
             throw new Exception\RuntimeException(
@@ -238,7 +236,7 @@ class BlitlineAdapter extends BaseAdapter //implements
      * @param array $response
      * @return BlitlineJobProcessedResponse
      */
-    protected function getBlitlineJobProcessedResponse(array $response)
+    protected function getJobProcessedResponse(array $response)
     {
         if (!isset($response['results']) || !is_array($response['results'])) {
             throw new Exception\RuntimeException('Unexpected response format; contains no result');

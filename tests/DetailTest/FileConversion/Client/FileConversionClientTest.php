@@ -78,16 +78,22 @@ class FileConversionClientTest extends TestCase
 
         $client = FileConversionClient::factory($config);
 
+        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('listJobs'));
+        $this->assertEquals(
+            'Detail\FileConversion\Client\Response\JobList',
+            $client->getCommand('listJobs')->getOperation()->getResponseClass()
+        );
+
         $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('fetchJob'));
         $this->assertEquals(
             'Detail\FileConversion\Client\Response\Job',
             $client->getCommand('fetchJob')->getOperation()->getResponseClass()
         );
 
-        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('createJob'));
+        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('submitJob'));
         $this->assertEquals(
             'Detail\FileConversion\Client\Response\Job',
-            $client->getCommand('createJob')->getOperation()->getResponseClass()
+            $client->getCommand('submitJob')->getOperation()->getResponseClass()
         );
     }
 
