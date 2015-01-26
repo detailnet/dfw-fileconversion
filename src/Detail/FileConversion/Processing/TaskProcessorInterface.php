@@ -2,7 +2,7 @@
 
 namespace Detail\FileConversion\Processing;
 
-interface JobProcessorInterface
+interface TaskProcessorInterface
 {
     /**
      * @param Task\TaskInterface $task

@@ -2,8 +2,8 @@
 
 namespace Detail\FileConversion\Processing;
 
-class JobProcessor implements
-    JobProcessorInterface
+class TaskProcessor implements
+    TaskProcessorInterface
 {
     /**
      * @var Adapter\AdapterInterface
