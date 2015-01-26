@@ -13,10 +13,10 @@ if (file_exists($basePath . 'vendor/autoload.php')) {
 
 $loader->add('Detail\FileConversion', $basePath . 'src');
 
-if (!file_exists('config.php')) {
+if (!file_exists(__DIR__ . '/config.php')) {
     throw new RuntimeException(
         'Missing configuration file "config.php"; make a copy of "config.php.dist" and update it'
     );
 }
 
-return require 'config.php';
+return require __DIR__ . '/config.php';

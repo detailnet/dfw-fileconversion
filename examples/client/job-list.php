@@ -2,7 +2,7 @@
 
 use Detail\FileConversion\Client\FileConversionClient;
 
-$config = require 'bootstrap.php';
+$config = require '../bootstrap.php';
 $params = array();
 
 if (isset($_GET['page'])) {

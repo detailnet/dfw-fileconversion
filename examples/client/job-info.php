@@ -2,7 +2,7 @@
 
 use Detail\FileConversion\Client\FileConversionClient;
 
-$config = require 'bootstrap.php';
+$config = require '../bootstrap.php';
 
 $jobId = isset($_GET['job_id']) ? $_GET['job_id'] : null;
 
