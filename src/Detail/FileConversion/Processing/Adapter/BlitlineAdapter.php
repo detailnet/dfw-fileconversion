@@ -22,14 +22,24 @@ class BlitlineAdapter extends BaseAdapter //implements
     protected $blitlineClient;
 
     /**
+     * @var BlitlineJobCreatorInterface
+     */
+    protected $blitlineJobCreator;
+
+    /**
      * @param BlitlineClient $blitlineClient
+     * @param BlitlineJobCreatorInterface $blitlineJobCreator
      * @param array $options
      */
-    public function __construct(BlitlineClient $blitlineClient, array $options = array())
-    {
+    public function __construct(
+        BlitlineClient $blitlineClient,
+        BlitlineJobCreatorInterface $blitlineJobCreator,
+        array $options = array()
+    ) {
         parent::__construct($options);
 
-        $this->blitlineClient = $blitlineClient;
+        $this->setBlitlineClient($blitlineClient);
+        $this->setBlitlineJobCreator($blitlineJobCreator);
     }
 
     /**
@@ -43,9 +53,25 @@ class BlitlineAdapter extends BaseAdapter //implements
     /**
      * @param BlitlineClient $blitlineClient
      */
-    public function setBlitlineClient($blitlineClient)
+    public function setBlitlineClient(BlitlineClient $blitlineClient)
     {
         $this->blitlineClient = $blitlineClient;
+    }
+
+    /**
+     * @return BlitlineJobCreatorInterface
+     */
+    public function getBlitlineJobCreator()
+    {
+        return $this->blitlineJobCreator;
+    }
+
+    /**
+     * @param BlitlineJobCreatorInterface $blitlineJobCreator
+     */
+    public function setBlitlineJobCreator(BlitlineJobCreatorInterface $blitlineJobCreator)
+    {
+        $this->blitlineJobCreator = $blitlineJobCreator;
     }
 
     /**
@@ -155,47 +181,57 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     protected function createBlitlineJob(Task\TaskInterface $task)
     {
-        $jobBuilder = $this->getBlitlineClient()->getJobBuilder();
-        $job = $task->getJob();
+        $jobCreator = $this->getBlitlineJobCreator();
 
-        $blitlineJob = $jobBuilder->createJob()
-            ->setSourceUrl($job->getSourceUrl());
-
-        $postbackUrl = $this->getOption(self::OPTION_POSTBACK_URL);
-
-        if ($postbackUrl !== null) {
-            $blitlineJob->setPostbackUrl($postbackUrl);
-        }
-
-        foreach ($job->getActions() as $action) {
-            $saveOptions = $action->getSaveOptions();
-            $saveOptionsData = array(
-                'image_identifier' => $saveOptions->getIdentifier(),
-            );
-
-            switch ($saveOptions->getType()) {
-                case $saveOptions::TYPE_S3:
-                    $saveOptionsData['s3_destination'] = $saveOptions->getParams();
-                    break;
-                default:
-                    throw new Exception\RuntimeException(
-                        sprintf(
-                            'Adapter does not support save options type "%s"',
-                            $saveOptions->getType()
-                        )
-                    );
-                    break;
-            }
-
-            $blitlineJob->addFunction(
-                $jobBuilder->createFunction()
-                    ->setName($action->getName())
-                    ->setParams($action->getParams())
-                    ->setSaveOptions($saveOptionsData)
+        if ($jobCreator === null) {
+            throw new Exception\RuntimeException(
+                'Blitline job creator is required to create Blitline jobs'
             );
         }
 
-        return $blitlineJob;
+        return $jobCreator->create($task);
+
+//        $jobBuilder = $this->getBlitlineClient()->getJobBuilder();
+//        $job = $task->getJob();
+//
+//        $blitlineJob = $jobBuilder->createJob()
+//            ->setSourceUrl($job->getSourceUrl());
+//
+//        $postbackUrl = $this->getOption(self::OPTION_POSTBACK_URL);
+//
+//        if ($postbackUrl !== null) {
+//            $blitlineJob->setPostbackUrl($postbackUrl);
+//        }
+//
+//        foreach ($job->getActions() as $action) {
+//            $saveOptions = $action->getSaveOptions();
+//            $saveOptionsData = array(
+//                'image_identifier' => $saveOptions->getIdentifier(),
+//            );
+//
+//            switch ($saveOptions->getType()) {
+//                case $saveOptions::TYPE_S3:
+//                    $saveOptionsData['s3_destination'] = $saveOptions->getParams();
+//                    break;
+//                default:
+//                    throw new Exception\RuntimeException(
+//                        sprintf(
+//                            'Adapter does not support save options type "%s"',
+//                            $saveOptions->getType()
+//                        )
+//                    );
+//                    break;
+//            }
+//
+//            $blitlineJob->addFunction(
+//                $jobBuilder->createFunction()
+//                    ->setName($action->getName())
+//                    ->setParams($action->getParams())
+//                    ->setSaveOptions($saveOptionsData)
+//            );
+//        }
+//
+//        return $blitlineJob;
     }
 
     /**
