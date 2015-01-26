@@ -24,7 +24,7 @@ $getConfig = function($optionName) use ($config) {
 
 $client = FileConversionClient::factory($config);
 
-/** @var \Detail\FileConversion\Job\JobBuilder $jobBuilder */
+/** @var \Detail\FileConversion\Client\Job\JobBuilder $jobBuilder */
 $jobBuilder = $client->getJobBuilder();
 $jobBuilder->setDefaultOption(
     'action.save',
