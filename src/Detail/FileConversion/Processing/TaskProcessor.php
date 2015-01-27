@@ -6,32 +6,58 @@ class TaskProcessor implements
     TaskProcessorInterface
 {
     /**
-     * @var Adapter\AdapterInterface
+     * @var AdapterManagerInterface
      */
-    protected $adapter;
+    protected $adapters;
 
     /**
-     * @param Adapter\AdapterInterface $adapter
+     * @var string
      */
-    public function __construct(Adapter\AdapterInterface $adapter)
+    protected $defaultAdapter;
+
+    /**
+     * @param AdapterManagerInterface $adapters
+     * @param string $defaultAdapter
+     */
+    public function __construct(AdapterManagerInterface $adapters, $defaultAdapter = null)
     {
-        $this->setAdapter($adapter);
+        $this->setAdapters($adapters);
+
+        if ($defaultAdapter !== null) {
+            $this->setDefaultAdapter($defaultAdapter);
+        }
     }
 
     /**
-     * @return Adapter\AdapterInterface
+     * @return AdapterManagerInterface
      */
-    public function getAdapter()
+    public function getAdapters()
     {
-        return $this->adapter;
+        return $this->adapters;
     }
 
     /**
-     * @param Adapter\AdapterInterface $adapter
+     * @param AdapterManagerInterface $adapters
      */
-    public function setAdapter(Adapter\AdapterInterface $adapter)
+    public function setAdapters(AdapterManagerInterface $adapters)
     {
-        $this->adapter = $adapter;
+        $this->adapters = $adapters;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultAdapter()
+    {
+        return $this->defaultAdapter;
+    }
+
+    /**
+     * @param string $defaultAdapter
+     */
+    public function setDefaultAdapter($defaultAdapter)
+    {
+        $this->defaultAdapter = $defaultAdapter;
     }
 
     /**
@@ -52,7 +78,7 @@ class TaskProcessor implements
     {
         /** @todo This implementation is incomplete */
 
-        $adapter = $this->getAdapter();
+        $adapter = $this->getAdapter($task);
 
 //        $adapter->supportsTask($task);
 //        // or
@@ -71,7 +97,7 @@ class TaskProcessor implements
      */
     public function checkProcessing(Task\TaskInterface $task)
     {
-        $adapter = $this->getAdapter();
+        $adapter = $this->getAdapter($task);
         $result = $adapter->checkProcessing($task);
 
         return $result;
@@ -84,9 +110,36 @@ class TaskProcessor implements
      */
     public function endProcessing(Task\TaskInterface $task, array $data)
     {
-        $adapter = $this->getAdapter();
+        $adapter = $this->getAdapter($task);
         $result = $adapter->endProcessing($task, $data);
 
         return $result;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return Adapter\AdapterInterface
+     */
+    protected function getAdapter(Task\TaskInterface $task)
+    {
+        if ($task->getAdapter() !== null) {
+            $adapter = $task->getAdapter();
+        } elseif ($this->getDefaultAdapter() !== null) {
+            $adapter = $this->getDefaultAdapter();
+        } else {
+            throw new Exception\RuntimeException(
+                'Task does not specifiy an adapter and no default adapter was registered'
+            );
+        }
+
+        $adapters = $this->getAdapters();
+
+        if (!$adapters->hasAdapter($adapter)) {
+            throw new Exception\RuntimeException(
+                sprintf('No adapter registered for type "%s"', $adapter)
+            );
+        }
+
+        return $adapters->getAdapter($adapter);
     }
 }

@@ -20,6 +20,11 @@ class Task implements
     protected $priority = self::PRIORITY_NORMAL;
 
     /**
+     * @var string
+     */
+    protected $adapter;
+
+    /**
      * @param int $priority
      */
     public function __construct($priority = null)
@@ -59,5 +64,21 @@ class Task implements
     public function setPriority($priority)
     {
         $this->priority = $priority;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdapter()
+    {
+        return $this->adapter;
+    }
+
+    /**
+     * @param string $adapter
+     */
+    public function setAdapter($adapter)
+    {
+        $this->adapter = $adapter;
     }
 }

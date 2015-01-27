@@ -23,4 +23,14 @@ interface TaskInterface
      * @param int $priority
      */
     public function setPriority($priority);
+
+    /**
+     * @return string
+     */
+    public function getAdapter();
+
+    /**
+     * @param string $adapter
+     */
+    public function setAdapter($adapter);
 }
