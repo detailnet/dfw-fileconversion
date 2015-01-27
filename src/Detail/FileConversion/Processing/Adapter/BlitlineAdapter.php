@@ -14,8 +14,6 @@ class BlitlineAdapter extends BaseAdapter //implements
 //    Features\AsynchronousProcessing,
 //    Features\Saving
 {
-    const OPTION_POSTBACK_URL = 'postback_url';
-
     /**
      * @var BlitlineClient
      */
@@ -183,49 +181,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         }
 
-        return $jobCreator->create($task);
-
-//        $jobBuilder = $this->getBlitlineClient()->getJobBuilder();
-//        $job = $task->getJob();
-//
-//        $blitlineJob = $jobBuilder->createJob()
-//            ->setSourceUrl($job->getSourceUrl());
-//
-//        $postbackUrl = $this->getOption(self::OPTION_POSTBACK_URL);
-//
-//        if ($postbackUrl !== null) {
-//            $blitlineJob->setPostbackUrl($postbackUrl);
-//        }
-//
-//        foreach ($job->getActions() as $action) {
-//            $saveOptions = $action->getSaveOptions();
-//            $saveOptionsData = array(
-//                'image_identifier' => $saveOptions->getIdentifier(),
-//            );
-//
-//            switch ($saveOptions->getType()) {
-//                case $saveOptions::TYPE_S3:
-//                    $saveOptionsData['s3_destination'] = $saveOptions->getParams();
-//                    break;
-//                default:
-//                    throw new Exception\RuntimeException(
-//                        sprintf(
-//                            'Adapter does not support save options type "%s"',
-//                            $saveOptions->getType()
-//                        )
-//                    );
-//                    break;
-//            }
-//
-//            $blitlineJob->addFunction(
-//                $jobBuilder->createFunction()
-//                    ->setName($action->getName())
-//                    ->setParams($action->getParams())
-//                    ->setSaveOptions($saveOptionsData)
-//            );
-//        }
-//
-//        return $blitlineJob;
+        return $jobCreator->create($task, $this->getClient()->getJobBuilder());
     }
 
     /**

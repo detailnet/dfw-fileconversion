@@ -171,7 +171,7 @@ class InternalAdapter extends BaseAdapter
             );
         }
 
-        return $jobCreator->create($task);
+        return $jobCreator->create($task, $this->getClient()->getJobBuilder());
     }
 
     /**
