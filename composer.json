@@ -31,7 +31,7 @@
         "detailnet/blitline": "~0.3.3"
     },
     "suggest": {
-        "detailnet/blitline": "For usage of the BlitlineAdapter"
+        "detailnet/blitline": "For usage of the Blitline adapter"
     },
     "autoload": {
         "psr-0": {

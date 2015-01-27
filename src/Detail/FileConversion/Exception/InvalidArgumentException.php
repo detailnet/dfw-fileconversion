@@ -1,6 +1,6 @@
 <?php
 
-namespace Detail\FileConversion\Client\Exception;
+namespace Detail\FileConversion\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException implements
     ExceptionInterface

@@ -32,7 +32,9 @@ class BlitlineAdapter extends BaseAdapter //implements
      * @param array $options
      */
     public function __construct(
-        BlitlineClient $client, BlitlineJobCreatorInterface $jobCreator, array $options = array()
+        BlitlineClient $client,
+        BlitlineJobCreatorInterface $jobCreator,
+        array $options = array()
     ) {
         parent::__construct($options);
 
@@ -124,13 +126,7 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     public function endProcessing(Task\TaskInterface $task, $response)
     {
-        if (is_array($response)) {
-            $response = $this->getJobProcessedResponse($response);
-        } else if (!$response instanceof BlitlineJobProcessedResponse) {
-            throw new Exception\RuntimeException(
-                'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
-            );
-        }
+        $response = $this->getJobProcessedResponse($response);
 
         if ($response->isSuccess()) {
             $outputs = array();
@@ -238,10 +234,19 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     protected function getJobProcessedResponse(array $response)
     {
-        if (!isset($response['results']) || !is_array($response['results'])) {
-            throw new Exception\RuntimeException('Unexpected response format; contains no result');
+        if (is_array($response)) {
+            if (!isset($response['results']) || !is_array($response['results'])) {
+                throw new Exception\RuntimeException('Unexpected response format; contains no result');
+            }
+
+            $response = new BlitlineJobProcessedResponse($response['results']);
+
+        } elseif (!$response instanceof BlitlineJobProcessedResponse) {
+            throw new Exception\RuntimeException(
+                'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
+            );
         }
 
-        return new BlitlineJobProcessedResponse($response['results']);
+        return $response;
     }
 }

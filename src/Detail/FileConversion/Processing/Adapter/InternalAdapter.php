@@ -28,7 +28,9 @@ class InternalAdapter extends BaseAdapter
      * @param array $options
      */
     public function __construct(
-        FileConversionClient $client, InternalJobCreatorInterface $jobCreator, array $options = array()
+        FileConversionClient $client,
+        InternalJobCreatorInterface $jobCreator,
+        array $options = array()
     ) {
         parent::__construct($options);
 
@@ -127,7 +129,7 @@ class InternalAdapter extends BaseAdapter
     {
         if (is_array($job)) {
             $job = $this->getJobFromResponse($job);
-        } else if (!$job instanceof Job) {
+        } elseif (!$job instanceof Job) {
             throw new Exception\RuntimeException(
                 'Invalid response; expected array or Detail\FileConversion\Client\Response\Job object'
             );

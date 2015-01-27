@@ -2,6 +2,8 @@
 
 namespace Detail\FileConversion\Client\Exception;
 
-interface ExceptionInterface
+use Detail\FileConversion\Exception\ExceptionInterface as BaseExceptionInterface;
+
+interface ExceptionInterface extends BaseExceptionInterface
 {
 }
