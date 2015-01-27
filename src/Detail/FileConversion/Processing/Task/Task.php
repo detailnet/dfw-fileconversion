@@ -26,11 +26,16 @@ class Task implements
 
     /**
      * @param int $priority
+     * @param string $adapter
      */
-    public function __construct($priority = null)
+    public function __construct($priority = null, $adapter = null)
     {
         if ($priority !== null) {
-            $this->priority = $priority;
+            $this->setPriority($priority);
+        }
+
+        if ($adapter !== null) {
+            $this->setAdapter($adapter);
         }
     }
 
