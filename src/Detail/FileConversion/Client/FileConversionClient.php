@@ -6,22 +6,22 @@ use Guzzle\Common\Collection;
 use Guzzle\Service\Client;
 use Guzzle\Service\Description\ServiceDescription;
 
-//use Detail\FileConversion\Exception\InvalidArgumentException;
-use Detail\FileConversion\Job\Definition\DefinitionInterface;
-use Detail\FileConversion\Job\JobBuilder;
-use Detail\FileConversion\Job\JobBuilderInterface;
-use Detail\FileConversion\Response;
+//use Detail\FileConversion\Client\Exception\InvalidArgumentException;
+use Detail\FileConversion\Client\Job\Definition\DefinitionInterface;
+use Detail\FileConversion\Client\Job\JobBuilder;
+use Detail\FileConversion\Client\Job\JobBuilderInterface;
+use Detail\FileConversion\Client\Response;
 
 /**
  * FileConversion API client.
  *
  * @method Response\JobList listJobs(array $params = array())
  * @method Response\Job fetchJob(array $params = array())
- * @method Response\Job createJob(mixed $job = array())
+ * @method Response\Job submitJob(mixed $job = array())
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.2.0';
+    const CLIENT_VERSION = '0.3.0';
 
     /**
      * @var JobBuilderInterface
@@ -58,7 +58,7 @@ class FileConversionClient extends Client
             )
         );
         $client->setDescription(
-            ServiceDescription::factory(__DIR__ . '/../ServiceDescription/FileConversion.php')
+            ServiceDescription::factory(__DIR__ . '/ServiceDescription/FileConversion.php')
         );
         $client->setUserAgent('dfw-fileconversion/' . self::CLIENT_VERSION, true);
 

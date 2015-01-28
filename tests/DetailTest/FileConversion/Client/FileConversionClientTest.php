@@ -1,11 +1,11 @@
 <?php
 
-namespace DetailTest\FileConversion\Client;
+namespace DetailTest\FileConversion\Client\Client;
 
 use PHPUnit_Framework_TestCase as TestCase;
 
 use Detail\FileConversion\Client\FileConversionClient;
-use Detail\FileConversion\Job\JobBuilder;
+use Detail\FileConversion\Client\Job\JobBuilder;
 
 class FileConversionClientTest extends TestCase
 {
@@ -45,7 +45,7 @@ class FileConversionClientTest extends TestCase
     }
 
 //    /**
-//     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
+//     * @expectedException \Detail\FileConversion\Client\Exception\InvalidArgumentException
 //     */
 //    public function testFactoryThrowsExceptionOnMissingConfigurationOptions()
 //    {
@@ -55,7 +55,7 @@ class FileConversionClientTest extends TestCase
 //    }
 
 //    /**
-//     * @expectedException \Detail\FileConversion\Exception\InvalidArgumentException
+//     * @expectedException \Detail\FileConversion\Client\Exception\InvalidArgumentException
 //     */
 //    public function testFactoryThrowsExceptionOnBlankConfigurationOptions()
 //    {
@@ -78,16 +78,22 @@ class FileConversionClientTest extends TestCase
 
         $client = FileConversionClient::factory($config);
 
+        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('listJobs'));
+        $this->assertEquals(
+            'Detail\FileConversion\Client\Response\JobList',
+            $client->getCommand('listJobs')->getOperation()->getResponseClass()
+        );
+
         $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('fetchJob'));
         $this->assertEquals(
-            'Detail\FileConversion\Response\Job',
+            'Detail\FileConversion\Client\Response\Job',
             $client->getCommand('fetchJob')->getOperation()->getResponseClass()
         );
 
-        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('createJob'));
+        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('submitJob'));
         $this->assertEquals(
-            'Detail\FileConversion\Response\Job',
-            $client->getCommand('createJob')->getOperation()->getResponseClass()
+            'Detail\FileConversion\Client\Response\Job',
+            $client->getCommand('submitJob')->getOperation()->getResponseClass()
         );
     }
 
@@ -95,7 +101,7 @@ class FileConversionClientTest extends TestCase
     {
         $client = new FileConversionClient();
 
-        $this->assertInstanceOf('Detail\FileConversion\Job\JobBuilder', $client->getJobBuilder());
+        $this->assertInstanceOf('Detail\FileConversion\Client\Job\JobBuilder', $client->getJobBuilder());
 
         $jobBuilder = new JobBuilder();
 
@@ -123,7 +129,7 @@ class FileConversionClientTest extends TestCase
 
         $commandArgs = array('c' => 'd');
 
-        $definition = $this->getMock('Detail\FileConversion\Job\Definition\JobDefinition');
+        $definition = $this->getMock('Detail\FileConversion\Client\Job\Definition\JobDefinition');
         $definition
             ->expects($this->any())
             ->method('toArray')

@@ -1,6 +1,6 @@
 <?php
 
-namespace Detail\FileConversion\Exception;
+namespace Detail\FileConversion\Processing\Exception;
 
 class RuntimeException extends \RuntimeException implements
     ExceptionInterface
