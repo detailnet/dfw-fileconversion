@@ -18,19 +18,4 @@ interface ResultInterface
      * @return array
      */
     public function getOriginalMeta();
-
-    /**
-     * @return boolean
-     */
-    public function isSuccess();
-
-    /**
-     * @return boolean
-     */
-    public function isError();
-
-    /**
-     * @return string|null
-     */
-    public function getError();
 }

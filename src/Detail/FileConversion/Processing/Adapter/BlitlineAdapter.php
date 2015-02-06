@@ -3,6 +3,7 @@
 namespace Detail\FileConversion\Processing\Adapter;
 
 use Detail\Blitline\Client\BlitlineClient;
+use Detail\Blitline\Client\Exception as BlitlineClientException;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
 use Detail\FileConversion\Processing\Task;
@@ -79,17 +80,38 @@ class BlitlineAdapter extends BaseAdapter //implements
     public function startProcessing(Task\TaskInterface $task)
     {
         $job = $this->createBlitlineJob($task);
-
         $client = $this->getClient();
 
         try {
             $response = $client->submitJob($job);
             return $response->getJobId();
 
-        } catch (\Exception $e) {
-            throw new Exception\RuntimeException(
-                sprintf('Blitline API request failed: %s', $e->getMessage()),
+        } catch (BlitlineClientException\BadRequestException $e) {
+            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
+            // Note that the request could have timed out...
+            // It's possible, the processing can be started successfully upon retry.
+            throw new Exception\ProcessingUnavailableException(
+                sprintf(
+                    'Failed to start processing because Blitline seems to be unavailable: %s',
+                    $e->getMessage()
+                ),
                 0,
+                $e
+            );
+        } catch (BlitlineClientException\BadResponseException $e) {
+            // 4xx and 5xx problems (we don't know if the problems is only with this job or
+            // if Blitline's having server side problems (in case of 5xx errors).
+            // Either way, we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed immediately after submitting the job: %s',$e->getMessage()),
+                0,
+                $e
+            );
+        } catch (\Exception $e) {
+            // Also fail when something else went wrong...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Failed to start processing: %s', $e->getMessage()),
+                1,
                 $e
             );
         }
@@ -97,7 +119,7 @@ class BlitlineAdapter extends BaseAdapter //implements
 
     /**
      * @param Task\TaskInterface $task
-     * @return Task\ResultInterface|null
+     * @return Task\Result|null
      */
     public function checkProcessing(Task\TaskInterface $task)
     {
@@ -106,10 +128,32 @@ class BlitlineAdapter extends BaseAdapter //implements
         try {
             $response = $client->pollJob(array('job_id' => $task->getProcessId()));
 
-        } catch (\Exception $e) {
-            throw new Exception\RuntimeException(
-                sprintf('Blitline API request failed: %s', $e->getMessage()),
+        } catch (BlitlineClientException\BadRequestException $e) {
+            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
+            // Note that the request could have timed out...
+            // It's possible, the processing can be checked upon retry.
+            throw new Exception\ProcessingUnavailableException(
+                sprintf(
+                    'Failed to check processing because Blitline seems to be unavailable: %s',
+                    $e->getMessage()
+                ),
                 0,
+                $e
+            );
+        } catch (BlitlineClientException\BadResponseException $e) {
+            // 4xx and 5xx problems (we don't know if the problems is only with this job or
+            // if Blitline's having server side problems (in case of 5xx errors).
+            // Either way, we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed after polling for the completion of the job: %s',$e->getMessage()),
+                0,
+                $e
+            );
+        } catch (\Exception $e) {
+            // Also fail when something else went wrong...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Failed to check processing: %s', $e->getMessage()),
+                1,
                 $e
             );
         }
@@ -120,31 +164,45 @@ class BlitlineAdapter extends BaseAdapter //implements
     /**
      * @param Task\TaskInterface $task
      * @param BlitlineJobProcessedResponse|array $response
-     * @return Task\ResultInterface
+     * @return Task\Result
      */
     public function endProcessing(Task\TaskInterface $task, $response)
     {
-        $response = $this->getJobProcessedResponse($response);
-
-        if ($response->isSuccess()) {
-            $outputs = array();
-
-            foreach ($response->getImages() as $image) {
-                $outputs[] = new Task\Output(
-                    isset($image['image_identifier']) ? $image['image_identifier'] : null,
-                    isset($image['s3_url']) ? $image['s3_url'] : null,
-                    isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : array()
+        if (!$response instanceof BlitlineJobProcessedResponse) {
+            if (!is_array($response)) {
+                throw new Exception\ProcessingFailedException(
+                    'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
                 );
             }
 
-            /** @todo We should probably fail when there are no outputs... */
-
-            $result = new Task\SuccessResult($task, $outputs, $response->getOriginalMeta());
-        } else {
-            $result = new Task\ErrorResult($task, $response->getError());
+            try {
+                $response = BlitlineJobProcessedResponse::fromResponse($response);
+            } catch (\Exception $e) {
+                throw new Exception\ProcessingFailedException(
+                    sprintf('Processing failed after response data have been received: %s', $e->getMessage()),
+                    0,
+                    $e
+                );
+            }
         }
 
-        return $result;
+        $outputs = array();
+
+        foreach ($response->getImages() as $image) {
+            $outputs[] = new Task\Output(
+                isset($image['image_identifier']) ? $image['image_identifier'] : null,
+                isset($image['s3_url']) ? $image['s3_url'] : null,
+                isset($image['meta']) && is_array($image['meta']) ? $image['meta'] : array()
+            );
+        }
+
+        if (count($outputs) === 0) {
+            throw new Exception\ProcessingFailedException(
+                'Processing failed because there were no images in the response'
+            );
+        }
+
+        return new Task\Result($task, $outputs, $response->getOriginalMeta());
     }
 
 //    /**
@@ -182,27 +240,5 @@ class BlitlineAdapter extends BaseAdapter //implements
         }
 
         return $jobCreator->create($task, $this->getClient()->getJobBuilder());
-    }
-
-    /**
-     * @param array $response
-     * @return BlitlineJobProcessedResponse
-     */
-    protected function getJobProcessedResponse(array $response)
-    {
-        if (is_array($response)) {
-            if (!isset($response['results']) || !is_array($response['results'])) {
-                throw new Exception\RuntimeException('Unexpected response format; contains no result');
-            }
-
-            $response = new BlitlineJobProcessedResponse($response['results']);
-
-        } elseif (!$response instanceof BlitlineJobProcessedResponse) {
-            throw new Exception\RuntimeException(
-                'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
-            );
-        }
-
-        return $response;
     }
 }

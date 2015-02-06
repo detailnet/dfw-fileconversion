@@ -2,7 +2,7 @@
 
 namespace Detail\FileConversion\Processing\Task;
 
-abstract class BaseResult implements
+class Result implements
     ResultInterface
 {
     /**
@@ -21,25 +21,15 @@ abstract class BaseResult implements
     protected $originalMeta = array();
 
     /**
-     * @var string
-     */
-    protected $error;
-
-    /**
      * @param TaskInterface $task
      * @param array $outputs
      * @param array $originalMeta
-     * @param string $error
      */
-    public function __construct(TaskInterface $task, array $outputs, array $originalMeta = array(), $error = null)
+    public function __construct(TaskInterface $task, array $outputs, array $originalMeta = array())
     {
         $this->task = $task;
         $this->outputs = $outputs;
         $this->originalMeta = $originalMeta;
-
-        if ($error !== null) {
-            $this->error = $error;
-        }
     }
 
     /**
@@ -64,29 +54,5 @@ abstract class BaseResult implements
     public function getOriginalMeta()
     {
         return $this->originalMeta;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isSuccess()
-    {
-        return !$this->isError();
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isError()
-    {
-        return $this->getError() !== null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getError()
-    {
-        return $this->error;
     }
 }
