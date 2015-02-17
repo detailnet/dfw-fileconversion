@@ -103,7 +103,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             // if Blitline's having server side problems (in case of 5xx errors).
             // Either way, we need to fail...
             throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed immediately after submitting the job: %s',$e->getMessage()),
+                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
                 0,
                 $e
             );
@@ -145,7 +145,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             // if Blitline's having server side problems (in case of 5xx errors).
             // Either way, we need to fail...
             throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed after polling for the completion of the job: %s',$e->getMessage()),
+                sprintf('Processing failed after polling for the completion of the job: %s', $e->getMessage()),
                 0,
                 $e
             );

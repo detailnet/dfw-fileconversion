@@ -6,7 +6,8 @@ use DateInterval;
 use DateTime;
 
 class TaskProcessor implements
-    TaskProcessorInterface
+    TaskProcessorInterface,
+    PausableTaskProcessorInterface
 {
     /**
      * @var AdapterManagerInterface
@@ -96,7 +97,7 @@ class TaskProcessor implements
     {
         if (is_string($pauseOnIncident)) {
             $pauseOnIncident = DateInterval::createFromDateString($pauseOnIncident);
-        } else if (!$pauseOnIncident instanceof DateInterval) {
+        } elseif (!$pauseOnIncident instanceof DateInterval) {
             throw new Exception\InvalidArgumentException(
                 '$pauseOnIncident must be a valid date string or DateInterval object'
             );
@@ -248,7 +249,8 @@ class TaskProcessor implements
      */
     protected function callAdapter(
         Adapter\AdapterInterface $adapter,
-        $method, array $arguments = array(),
+        $method,
+        array $arguments = array(),
         $considerPaused = true
     ) {
         if ($considerPaused !== false && $this->isPaused()) {
