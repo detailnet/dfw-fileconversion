@@ -2,6 +2,7 @@
 
 namespace Detail\FileConversion\Processing\Adapter;
 
+use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Response\Job;
 
@@ -77,17 +78,38 @@ class InternalAdapter extends BaseAdapter
     public function startProcessing(Task\TaskInterface $task)
     {
         $job = $this->createJob($task);
-
         $client = $this->getClient();
 
         try {
             $response = $client->submitJob($job);
             return $response->getId();
 
-        } catch (\Exception $e) {
-            throw new Exception\RuntimeException(
-                sprintf('DWS FileConversion API request failed: %s', $e->getMessage()),
+        } catch (ClientException\BadRequestException $e) {
+            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
+            // Note that the request could have timed out...
+            // It's possible, the processing can be started successfully upon retry.
+            throw new Exception\ProcessingUnavailableException(
+                sprintf(
+                    'Failed to start processing because DWS FileConversion seems to be unavailable: %s',
+                    $e->getMessage()
+                ),
                 0,
+                $e
+            );
+        } catch (ClientException\BadResponseException $e) {
+            // 4xx and 5xx problems (we don't know if the problems is only with this job or
+            // if DWS FileConversion's having server side problems - in case of 5xx errors).
+            // Either way, we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (\Exception $e) {
+            // Also fail when something else went wrong...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Failed to start processing: %s', $e->getMessage()),
+                1,
                 $e
             );
         }
@@ -95,7 +117,7 @@ class InternalAdapter extends BaseAdapter
 
     /**
      * @param Task\TaskInterface $task
-     * @return Task\ResultInterface|null
+     * @return Task\Result|null
      */
     public function checkProcessing(Task\TaskInterface $task)
     {
@@ -104,10 +126,32 @@ class InternalAdapter extends BaseAdapter
         try {
             $job = $client->fetchJob(array('job_id' => $task->getProcessId()));
 
-        } catch (\Exception $e) {
-            throw new Exception\RuntimeException(
-                sprintf('DWS FileConversion API request failed: %s', $e->getMessage()),
+        } catch (ClientException\BadRequestException $e) {
+            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
+            // Note that the request could have timed out...
+            // It's possible, the processing can be checked upon retry.
+            throw new Exception\ProcessingUnavailableException(
+                sprintf(
+                    'Failed to check processing because DWS FileConversion seems to be unavailable: %s',
+                    $e->getMessage()
+                ),
                 0,
+                $e
+            );
+        } catch (ClientException\BadResponseException $e) {
+            // 4xx and 5xx problems (we don't know if the problems is only with this job or
+            // if DWS FileConversion's having server side problems - in case of 5xx errors).
+            // Either way, we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed after checking the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (\Exception $e) {
+            // Also fail when something else went wrong...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Failed to check processing: %s', $e->getMessage()),
+                1,
                 $e
             );
         }
@@ -123,17 +167,11 @@ class InternalAdapter extends BaseAdapter
     /**
      * @param Task\TaskInterface $task
      * @param Job|array $job
-     * @return Task\ResultInterface
+     * @return Task\Result
      */
     public function endProcessing(Task\TaskInterface $task, $job)
     {
-        if (is_array($job)) {
-            $job = $this->getJobFromResponse($job);
-        } elseif (!$job instanceof Job) {
-            throw new Exception\RuntimeException(
-                'Invalid response; expected array or Detail\FileConversion\Client\Response\Job object'
-            );
-        }
+        $job = $this->getJobResponse($job);
 
         // Consider everything but error states as success
         if (!in_array($job->getStatus(), array('error', 'error_notifying'))) {
@@ -147,11 +185,18 @@ class InternalAdapter extends BaseAdapter
                 );
             }
 
-            /** @todo We should probably fail when there are no outputs... */
+            if (count($outputs) === 0) {
+                throw new Exception\ProcessingFailedException(
+                    'Processing failed because there were no conversion results in the response'
+                );
+            }
 
-            $result = new Task\SuccessResult($task, $outputs, $job->getSourceMeta());
+            $result = new Task\Result($task, $outputs, $job->getSourceMeta());
         } else {
-            $result = new Task\ErrorResult($task, 'Job failed'); /** @todo Provide specific error message */
+            /** @todo Provide specific error message */
+            throw new Exception\ProcessingFailedException(
+                'Processing failed because of an error during the conversion'
+            );
         }
 
         return $result;
@@ -175,11 +220,19 @@ class InternalAdapter extends BaseAdapter
     }
 
     /**
-     * @param array $response
+     * @param Job|array $job
      * @return Job
      */
-    protected function getJobFromResponse(array $response)
+    protected function getJobResponse($job)
     {
-        return new Job($response);
+        if (is_array($job)) {
+            $job = new Job($job);
+        } elseif (!$job instanceof Job) {
+            throw new Exception\RuntimeException(
+                'Invalid response; expected array or Detail\FileConversion\Client\Response\Job object'
+            );
+        }
+
+        return $job;
     }
 }

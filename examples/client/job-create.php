@@ -58,17 +58,22 @@ $job = $jobBuilder->createJob()
                 ),
                 true // Merge with defaults
             )
-    )
-    ->addNotification(
+    );
+
+try {
+    $job->addNotification(
         $jobBuilder->createNotification()
 //            ->setType('webhook')
             ->setParams(
                 array(
-                    'url' => 'http://requestb.in/12mcl541',
+                    'url' => $getConfig('notification_url'),
                 )
             )
     );
+} catch (RuntimeException $e) {
+    // Do nothing when no notification URL is provided (job will be created without notification)
+}
 
-$response = $client->createJob($job);
+$response = $client->submitJob($job);
 
 var_dump($response->getResult());
