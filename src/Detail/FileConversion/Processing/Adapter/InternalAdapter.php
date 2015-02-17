@@ -117,7 +117,7 @@ class InternalAdapter extends BaseAdapter
 
     /**
      * @param Task\TaskInterface $task
-     * @return Task\ResultInterface|null
+     * @return Task\Result|null
      */
     public function checkProcessing(Task\TaskInterface $task)
     {
@@ -167,7 +167,7 @@ class InternalAdapter extends BaseAdapter
     /**
      * @param Task\TaskInterface $task
      * @param Job|array $job
-     * @return Task\ResultInterface
+     * @return Task\Result
      */
     public function endProcessing(Task\TaskInterface $task, $job)
     {
