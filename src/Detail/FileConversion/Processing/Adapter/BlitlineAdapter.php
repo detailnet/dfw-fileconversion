@@ -168,24 +168,7 @@ class BlitlineAdapter extends BaseAdapter //implements
      */
     public function endProcessing(Task\TaskInterface $task, $response)
     {
-        if (!$response instanceof BlitlineJobProcessedResponse) {
-            if (!is_array($response)) {
-                throw new Exception\ProcessingFailedException(
-                    'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
-                );
-            }
-
-            try {
-                $response = BlitlineJobProcessedResponse::fromResponse($response);
-            } catch (\Exception $e) {
-                throw new Exception\ProcessingFailedException(
-                    sprintf('Processing failed after response data have been received: %s', $e->getMessage()),
-                    0,
-                    $e
-                );
-            }
-        }
-
+        $response = $this->getJobProcessedResponse($response);
         $outputs = array();
 
         foreach ($response->getImages() as $image) {
@@ -240,5 +223,35 @@ class BlitlineAdapter extends BaseAdapter //implements
         }
 
         return $jobCreator->create($task, $this->getClient()->getJobBuilder());
+    }
+
+    /**
+     * @param BlitlineJobProcessedResponse|array $response
+     * @return BlitlineJobProcessedResponse
+     */
+    protected function getJobProcessedResponse($response)
+    {
+        if (!$response instanceof BlitlineJobProcessedResponse) {
+            if (!is_array($response)) {
+                throw new Exception\ProcessingFailedException(
+                    'Invalid response; expected array or Detail\Blitline\Response\JobProcessed object'
+                );
+            }
+
+            try {
+                $response = BlitlineJobProcessedResponse::fromResponse($response);
+            } catch (\Exception $e) {
+                throw new Exception\ProcessingFailedException(
+                    sprintf(
+                        'Processing failed after response data have been received: %s',
+                        $e->getMessage()
+                    ),
+                    0,
+                    $e
+                );
+            }
+        }
+
+        return $response;
     }
 }
