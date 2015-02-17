@@ -32,6 +32,7 @@
     <rule ref="rulesets/codesize.xml">
         <exclude name="TooManyMethods"/>
         <exclude name="ExcessiveClassComplexity"/>
+        <exclude name="NPathComplexity"/>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyMethods">
         <properties>
@@ -41,6 +42,11 @@
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
         <properties>
             <property name="maximum" value="70" />
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/NPathComplexity">
+        <properties>
+            <property name="minimum" value="300" />
         </properties>
     </rule>
 
