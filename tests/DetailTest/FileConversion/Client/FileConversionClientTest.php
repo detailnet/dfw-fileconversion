@@ -40,7 +40,7 @@ class FileConversionClientTest extends TestCase
 
         $this->assertInstanceOf('Detail\FileConversion\Client\FileConversionClient', $client);
         $this->assertEquals('application/json', $client->getDefaultOption('headers')['Accept']);
-        $this->assertEquals('https://file-conversion.dws.detailnet.ch/api', $client->getConfig('base_url'));
+        $this->assertEquals('http://file-conversion.dws.detailnet.ch/api', $client->getConfig('base_url'));
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
 
