@@ -293,7 +293,7 @@ class TaskProcessor implements
                 throw new Exception\ProcessingPausedException(
                     sprintf(
                         'Paused processing due to an incident during %s: %s',
-                        __FUNCTION__,
+                        $method,
                         $e->getMessage()
                     ),
                     0,
