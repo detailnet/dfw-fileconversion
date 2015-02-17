@@ -97,9 +97,9 @@ class TaskProcessor implements
     {
         if (is_string($pauseOnIncident)) {
             $pauseOnIncident = DateInterval::createFromDateString($pauseOnIncident);
-        } elseif (!$pauseOnIncident instanceof DateInterval) {
+        } elseif (!$pauseOnIncident instanceof DateInterval && $pauseOnIncident !== false) {
             throw new Exception\InvalidArgumentException(
-                '$pauseOnIncident must be a valid date string or DateInterval object'
+                '$pauseOnIncident must be false, a valid date string or DateInterval object'
             );
         }
 
