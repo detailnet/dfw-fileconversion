@@ -7,6 +7,7 @@ use Guzzle\Service\Client;
 use Guzzle\Service\Description\ServiceDescription;
 
 //use Detail\FileConversion\Client\Exception\InvalidArgumentException;
+use Detail\FileConversion\Client\Subscriber;
 use Detail\FileConversion\Client\Job\Definition\DefinitionInterface;
 use Detail\FileConversion\Client\Job\JobBuilder;
 use Detail\FileConversion\Client\Job\JobBuilderInterface;
@@ -21,7 +22,7 @@ use Detail\FileConversion\Client\Response;
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.3.0';
+    const CLIENT_VERSION = '0.4.0';
 
     /**
      * @var JobBuilderInterface
@@ -30,7 +31,17 @@ class FileConversionClient extends Client
 
     public static function factory($options = array(), JobBuilderInterface $jobBuilder = null)
     {
-        $defaultOptions = array('base_url' => 'https://file-conversion.dws.detailnet.ch/api');
+        $defaultOptions = array(
+            'base_url' => 'http://file-conversion.dws.detailnet.ch/api',
+            'request.options' => array(
+                // Float describing the number of seconds to wait while trying to connect to a server.
+                // 0 was the default (wait indefinitely).
+                'connect_timeout' => 10,
+                // Float describing the timeout of the request in seconds.
+                // 0 was the default (wait indefinitely).
+                'timeout' => 60, // 60 seconds, may be overridden by individual operations
+            ),
+        );
 
 //        $requiredOptions = array();
 //
@@ -62,6 +73,9 @@ class FileConversionClient extends Client
         );
         $client->setUserAgent('dfw-fileconversion/' . self::CLIENT_VERSION, true);
 
+        $client->getEventDispatcher()->addSubscriber(new Subscriber\ErrorHandlerSubscriber());
+        $client->getEventDispatcher()->addSubscriber(new Subscriber\RequestOptionsSubscriber());
+
         return $client;
     }
 
@@ -85,6 +99,14 @@ class FileConversionClient extends Client
     {
         $this->jobBuilder = $jobBuilder;
         return $this;
+    }
+
+    /**
+     * @return \Guzzle\Http\Message\RequestFactoryInterface
+     */
+    public function getRequestFactory()
+    {
+        return $this->requestFactory;
     }
 
     /**

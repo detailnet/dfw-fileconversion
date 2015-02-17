@@ -100,7 +100,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         } catch (BlitlineClientException\BadResponseException $e) {
             // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if Blitline's having server side problems (in case of 5xx errors).
+            // if Blitline's having server side problems - in case of 5xx errors).
             // Either way, we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
@@ -142,7 +142,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         } catch (BlitlineClientException\BadResponseException $e) {
             // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if Blitline's having server side problems (in case of 5xx errors).
+            // if Blitline's having server side problems - in case of 5xx errors).
             // Either way, we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed after polling for the completion of the job: %s', $e->getMessage()),
