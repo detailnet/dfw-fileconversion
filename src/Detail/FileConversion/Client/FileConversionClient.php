@@ -55,6 +55,18 @@ class FileConversionClient extends Client
 
         $config = Collection::fromConfig($options, $defaultOptions);
 
+        $headers = array(
+            'Accept' => 'application/json',
+        );
+
+        if (isset($options['dws_app_id'])) {
+            $headers['DWS-App-ID'] = $options['dws_app_id'];
+        }
+
+        if (isset($options['dws_app_key'])) {
+            $headers['DWS-App-Key'] = $options['dws_app_key'];
+        }
+
         $client = new self($config->get('base_url'), $config, $jobBuilder);
 //        $client->setDefaultOption(
 //            'query',
@@ -62,12 +74,7 @@ class FileConversionClient extends Client
 //                'application_id' => $config['application_id'],
 //            )
 //        );
-        $client->setDefaultOption(
-            'headers',
-            array(
-                'Accept' => 'application/json',
-            )
-        );
+        $client->setDefaultOption('headers', $headers);
         $client->setDescription(
             ServiceDescription::factory(__DIR__ . '/ServiceDescription/FileConversion.php')
         );
