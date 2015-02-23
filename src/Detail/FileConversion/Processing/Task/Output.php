@@ -18,17 +18,21 @@ class Output //implements
     /**
      * @var array
      */
-    protected $meta = array();
+    protected $meta;
 
     /**
      * @param string $identifier
      * @param string $url
      * @param array $meta
      */
-    public function __construct($identifier, $url, array $meta)
+    public function __construct($identifier, $url = null, array $meta = array())
     {
         $this->identifier = $identifier;
-        $this->url = $url;
+
+        if ($url !== null) {
+            $this->url = $url;
+        }
+
         $this->meta = $meta;
     }
 

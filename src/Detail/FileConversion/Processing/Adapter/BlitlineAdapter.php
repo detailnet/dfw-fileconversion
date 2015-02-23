@@ -179,13 +179,19 @@ class BlitlineAdapter extends BaseAdapter //implements
             );
         }
 
-        if (count($outputs) === 0) {
-            throw new Exception\ProcessingFailedException(
-                'Processing failed because there were no images in the response'
-            );
+        $failedOutputs = array();
+
+        foreach ($response->getFailedImageIdentifiers() as $identifier) {
+            $failedOutputs[] = new Task\Output($identifier);
         }
 
-        return new Task\Result($task, $outputs, $response->getOriginalMeta());
+        return new Task\Result(
+            $task,
+            $outputs,
+            $failedOutputs,
+            $response->getOriginalMeta(),
+            array($response->getError())
+        );
     }
 
 //    /**

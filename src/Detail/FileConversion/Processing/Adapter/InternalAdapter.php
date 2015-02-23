@@ -176,6 +176,7 @@ class InternalAdapter extends BaseAdapter
         // Consider everything but error states as success
         if (!in_array($job->getStatus(), array('error', 'error_notifying'))) {
             $outputs = array();
+            $failedOutputs = array(); /** @todo Build from action status */
 
             foreach ($job->getResults() as $result) {
                 $outputs[] = new Task\Output(
@@ -185,13 +186,7 @@ class InternalAdapter extends BaseAdapter
                 );
             }
 
-            if (count($outputs) === 0) {
-                throw new Exception\ProcessingFailedException(
-                    'Processing failed because there were no conversion results in the response'
-                );
-            }
-
-            $result = new Task\Result($task, $outputs, $job->getSourceMeta());
+            $result = new Task\Result($task, $outputs, $failedOutputs, $job->getSourceMeta());
         } else {
             /** @todo Provide specific error message */
             throw new Exception\ProcessingFailedException(

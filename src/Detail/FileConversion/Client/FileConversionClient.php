@@ -22,7 +22,7 @@ use Detail\FileConversion\Client\Response;
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.4.0';
+    const CLIENT_VERSION = '0.4.1';
 
     /**
      * @var JobBuilderInterface
@@ -32,7 +32,7 @@ class FileConversionClient extends Client
     public static function factory($options = array(), JobBuilderInterface $jobBuilder = null)
     {
         $defaultOptions = array(
-            'base_url' => 'http://file-conversion.dws.detailnet.ch/api',
+            'base_url' => 'http://fileconversion.dws.detailnet.ch/api',
             'request.options' => array(
                 // Float describing the number of seconds to wait while trying to connect to a server.
                 // 0 was the default (wait indefinitely).

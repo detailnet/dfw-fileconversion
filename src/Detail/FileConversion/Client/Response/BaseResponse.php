@@ -4,8 +4,9 @@ namespace Detail\FileConversion\Client\Response;
 
 use DateTime;
 
-use Detail\FileConversion\Client\Exception\RuntimeException;
+use Detail\FileConversion\Client\Exception;
 
+use Guzzle\Common\Exception\RuntimeException as GuzzleRuntimeException;
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Command\ResponseClassInterface as GuzzleResponseInterface;
 
@@ -24,9 +25,19 @@ abstract class BaseResponse implements
      */
     public static function fromCommand(OperationCommand $command)
     {
-        $result = $command->getResponse()->json();
+        // Note that we should only get successful responses.
+        // For 4xx and 5xx errors an exception was thrown by our error handler.
+        // The only cases left to handle here is invalid JSON.
 
-        return new static($result);
+        $response = $command->getResponse();
+
+        try {
+            $responseData = $response->json();
+        } catch (GuzzleRuntimeException $e) {
+            throw new Exception\ServerException($e->getMessage(), 0, $e);
+        }
+
+        return new static($responseData);
     }
 
     /**
@@ -49,7 +60,7 @@ abstract class BaseResponse implements
         if ($key !== null) {
             if (!array_key_exists($key, $result)) {
                 if ($failOnNull !== false) {
-                    throw new RuntimeException(sprintf('Result does not contain "%s"', $key));
+                    throw new Exception\RuntimeException(sprintf('Result does not contain "%s"', $key));
                 } else {
                     return null;
                 }

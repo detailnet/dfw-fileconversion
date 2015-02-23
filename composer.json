@@ -28,7 +28,7 @@
         "squizlabs/php_codesniffer" : "~2.2.0",
         "phpmd/phpmd": "~2.1.3",
         "satooshi/php-coveralls": "dev-master",
-        "detailnet/blitline": "~0.4.1"
+        "detailnet/blitline": "~0.4.2"
     },
     "suggest": {
         "detailnet/blitline": "For usage of the Blitline adapter"
