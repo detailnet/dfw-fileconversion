@@ -245,7 +245,7 @@ class BlitlineAdapter extends BaseAdapter //implements
             }
 
             try {
-                $response = BlitlineJobProcessedResponse::fromResponse($response);
+                $response = BlitlineJobProcessedResponse::fromRawResponse($response);
             } catch (\Exception $e) {
                 throw new Exception\ProcessingFailedException(
                     sprintf(
