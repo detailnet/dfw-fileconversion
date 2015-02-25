@@ -1,6 +1,6 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter\Internal;
 
 use Detail\FileConversion\Client\Job\JobBuilderInterface;
 use Detail\FileConversion\Processing\Task;

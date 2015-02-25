@@ -1,6 +1,6 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
 use Detail\Blitline\Job\JobBuilderInterface;
 use Detail\FileConversion\Processing\Task;

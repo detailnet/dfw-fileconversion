@@ -1,15 +1,16 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter\Internal;
 
 use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Response\Job;
 
+use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Task;
 use Detail\FileConversion\Processing\Exception;
 
-class InternalAdapter extends BaseAdapter
+class InternalAdapter extends Adapter\BaseAdapter
 {
 //    const OPTION_NOTIFICATION_URL = 'notification_url';
 

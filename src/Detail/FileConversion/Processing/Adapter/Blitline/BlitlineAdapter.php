@@ -1,21 +1,18 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
 use Detail\Blitline\Client\BlitlineClient;
 use Detail\Blitline\Client\Exception as BlitlineClientException;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
 use Detail\FileConversion\Processing\Action;
+use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Exception;
 use Detail\FileConversion\Processing\Support;
 use Detail\FileConversion\Processing\Task;
 
-class BlitlineAdapter extends BaseAdapter //implements
-//    Features\Polling,
-//    Features\SynchronousProcessing,
-//    Features\AsynchronousProcessing,
-//    Features\Saving
+class BlitlineAdapter extends Adapter\BaseAdapter
 {
     /**
      * @var string[]
