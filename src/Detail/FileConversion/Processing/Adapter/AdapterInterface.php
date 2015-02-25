@@ -2,15 +2,28 @@
 
 namespace Detail\FileConversion\Processing\Adapter;
 
+use Detail\FileConversion\Processing\Support;
 use Detail\FileConversion\Processing\Task;
 
 interface AdapterInterface
 {
-//    /**
-//     * @param string $actionName
-//     * @return bool
-//     */
-//    public function supportsAction($actionName);
+    /**
+     * @param string $actionName
+     * @return boolean
+     */
+    public function supportsAction($actionName);
+
+    /**
+     * @param array $actions
+     * @return boolean
+     */
+    public function supportsActions(array $actions);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return Support\AdapterSupport
+     */
+    public function supportsTask(Task\TaskInterface $task);
 
     /**
      * @param Task\TaskInterface $task

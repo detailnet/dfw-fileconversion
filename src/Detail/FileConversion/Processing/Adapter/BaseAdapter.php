@@ -6,6 +6,11 @@ abstract class BaseAdapter implements
     AdapterInterface
 {
     /**
+     * @var string[]
+     */
+    protected static $supportedActions = array();
+
+    /**
      * @var array
      */
     protected $options = array();
@@ -16,6 +21,22 @@ abstract class BaseAdapter implements
     public function __construct(array $options = array())
     {
         $this->options = array_merge($this->options, $options);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getSupportedActions()
+    {
+        return static::$supportedActions;
+    }
+
+    /**
+     * @param string[] $supportedActions
+     */
+    public static function setSupportedActions(array $supportedActions)
+    {
+        static::$supportedActions = $supportedActions;
     }
 
     /**
@@ -42,5 +63,29 @@ abstract class BaseAdapter implements
     public function setOptions(array $options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * @param string $action
+     * @return boolean
+     */
+    public function supportsAction($action)
+    {
+        return in_array($action, self::getSupportedActions());
+    }
+
+    /**
+     * @param array $actions
+     * @return array
+     */
+    public function supportsActions(array $actions)
+    {
+        foreach ($actions as $action) {
+            if ($this->supportsAction($action) === false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

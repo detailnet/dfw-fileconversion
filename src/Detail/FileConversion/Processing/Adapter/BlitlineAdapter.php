@@ -6,8 +6,10 @@ use Detail\Blitline\Client\BlitlineClient;
 use Detail\Blitline\Client\Exception as BlitlineClientException;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
-use Detail\FileConversion\Processing\Task;
+use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Exception;
+use Detail\FileConversion\Processing\Support;
+use Detail\FileConversion\Processing\Task;
 
 class BlitlineAdapter extends BaseAdapter //implements
 //    Features\Polling,
@@ -15,6 +17,13 @@ class BlitlineAdapter extends BaseAdapter //implements
 //    Features\AsynchronousProcessing,
 //    Features\Saving
 {
+    /**
+     * @var string[]
+     */
+    protected static $supportedActions = array(
+        Action\ThumbnailAction::NAME,
+    );
+
     /**
      * @var BlitlineClient
      */
@@ -71,6 +80,17 @@ class BlitlineAdapter extends BaseAdapter //implements
     public function setJobCreator(BlitlineJobCreatorInterface $jobCreator)
     {
         $this->jobCreator = $jobCreator;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return Support\AdapterSupport
+     */
+    public function supportsTask(Task\TaskInterface $task)
+    {
+        $actions = $this->getJobCreator()->getActions($task);
+
+        return Support\AdapterSupport::test($this, $actions);
     }
 
     /**
@@ -194,15 +214,6 @@ class BlitlineAdapter extends BaseAdapter //implements
         );
     }
 
-//    /**
-//     * @param string $actionName
-//     * @return bool
-//     */
-//    public function supportsAction($actionName)
-//    {
-//        /** @todo Replace with real implementation */
-//        return true;
-//    }
 //
 //    /**
 //     * @param string $type
