@@ -18,7 +18,15 @@ interface BlitlineJobCreatorInterface
      * Extract task's actions.
      *
      * @param Task\TaskInterface $task
-     * @return array
+     * @return string[]
      */
     public function getActions(Task\TaskInterface $task);
+
+    /**
+     * Extract task's actions with their respective params.
+     *
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    public function getActionParams(Task\TaskInterface $task);
 }

@@ -5,6 +5,7 @@ namespace Detail\FileConversion\Processing\Adapter\Blitline;
 use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Exception;
+use Detail\FileConversion\Processing\Task;
 
 abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
     BlitlineJobCreatorInterface
@@ -47,5 +48,16 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
         }
 
         return $mapping[$action];
+    }
+
+    /**
+     * Extract task's actions.
+     *
+     * @param Task\TaskInterface $task
+     * @return string[]
+     */
+    public function getActions(Task\TaskInterface $task)
+    {
+        return array_keys($this->getActionParams($task));
     }
 }

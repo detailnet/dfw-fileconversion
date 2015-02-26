@@ -18,7 +18,7 @@ class BlitlineAdapter extends Adapter\BaseAdapter
      * @var string[]
      */
     protected static $supportedActions = array(
-        Action\ThumbnailAction::NAME,
+        Action\ThumbnailAction::NAME => Action\ThumbnailAction::class,
     );
 
     /**
@@ -77,17 +77,6 @@ class BlitlineAdapter extends Adapter\BaseAdapter
     public function setJobCreator(BlitlineJobCreatorInterface $jobCreator)
     {
         $this->jobCreator = $jobCreator;
-    }
-
-    /**
-     * @param Task\TaskInterface $task
-     * @return Support\AdapterSupport
-     */
-    public function supportsTask(Task\TaskInterface $task)
-    {
-        $actions = $this->getJobCreator()->getActions($task);
-
-        return Support\AdapterSupport::test($this, $actions);
     }
 
     /**
@@ -267,5 +256,23 @@ class BlitlineAdapter extends Adapter\BaseAdapter
         }
 
         return $response;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return string[]
+     */
+    protected function getTaskActions(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActions($task);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    protected function getTaskActionParams(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActionParams($task);
     }
 }

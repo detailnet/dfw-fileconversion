@@ -123,23 +123,30 @@ class TaskProcessor implements
     public function startProcessing(Task\TaskInterface $task)
     {
         $adapter = $this->getAdapter($task);
-        $support = $adapter->supportsTask($task);
 
-        if (!$support->isSupported()) {
+        $check = function(Adapter\BaseCheck $check, $reason) use ($adapter, $task) {
+            if ($check->isValid()) {
+                return;
+            }
+
             $message = sprintf(
-                'Adapter %s does not support given task (process identifier: %s)',
+                'Given task (identified by "%s") cannot be processed by adapter %s because %s',
+                $task->getProcessId(),
                 get_class($adapter),
-                $task->getProcessId()
+                $reason
             );
 
-            $reason = $support->getMessage();
+            $reasons = $check->getMessages();
 
-            if ($reason) {
-                $message .=  ': ' . $reason;
+            if (count($reasons)) {
+                $message .=  ': ' . implode(', ', $reasons);
             }
 
             throw new Exception\ProcessingFailedException($message);
-        }
+        };
+
+        $check($adapter->supportsTask($task), 'task is not supported');
+        $check($adapter->validateTask($task), 'task is invalid');
 
         $processId = $this->callAdapter($adapter, __FUNCTION__, array($task));
 

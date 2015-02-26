@@ -2,6 +2,8 @@
 
 namespace Detail\FileConversion\Processing\Adapter;
 
+use Detail\FileConversion\Processing\Task;
+
 abstract class BaseAdapter implements
     AdapterInterface
 {
@@ -36,7 +38,20 @@ abstract class BaseAdapter implements
      */
     public static function setSupportedActions(array $supportedActions)
     {
+        /** @todo Make sure the classes exist and point to implementations of ActionInterface */
         static::$supportedActions = $supportedActions;
+    }
+
+    /**
+     * @param string $action
+     * @param string $default
+     * @return string|null
+     */
+    public static function getSupportedActionClass($action, $default = null)
+    {
+        $supportedActions = self::getSupportedActions();
+
+        return isset($supportedActions[$action]) ? $supportedActions[$action] : $default;
     }
 
     /**
@@ -71,7 +86,9 @@ abstract class BaseAdapter implements
      */
     public function supportsAction($action)
     {
-        return in_array($action, self::getSupportedActions());
+        $supportedActions = self::getSupportedActions();
+
+        return isset($supportedActions[$action]);
     }
 
     /**
@@ -88,4 +105,60 @@ abstract class BaseAdapter implements
 
         return true;
     }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return SupportCheck
+     */
+    public function supportsTask(Task\TaskInterface $task)
+    {
+        $actualActions = $this->getTaskActions($task);
+
+        $support = new SupportCheck();
+        $support->validate(array_keys($this->getSupportedActions()), $actualActions);
+
+        return $support;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return ValidationCheck
+     */
+    public function validateTask(Task\TaskInterface $task)
+    {
+        $actionParams = $this->getTaskActionParams($task);
+        $validation = new ValidationCheck();
+
+        foreach ($actionParams as $action => $actualParams) {
+            $actionClass = self::getSupportedActionClass($action);
+            $requiredParamsProvider = array($actionClass, 'getRequiredParams');
+
+            // We assume the action is valid when:
+            // 1. We have no class that can perform the validation
+            // 2. The class does not provide the required params
+            if ($actionClass === null
+                || !is_callable($requiredParamsProvider)
+            ) {
+                continue;
+            }
+
+            $requiredParams = call_user_func($requiredParamsProvider);
+
+            $validation->validate($action, $requiredParams, $actualParams);
+        }
+
+        return $validation;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    abstract protected function getTaskActions(Task\TaskInterface $task);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    abstract protected function getTaskActionParams(Task\TaskInterface $task);
 }

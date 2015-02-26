@@ -2,7 +2,6 @@
 
 namespace Detail\FileConversion\Processing\Adapter;
 
-use Detail\FileConversion\Processing\Support;
 use Detail\FileConversion\Processing\Task;
 
 interface AdapterInterface
@@ -21,9 +20,15 @@ interface AdapterInterface
 
     /**
      * @param Task\TaskInterface $task
-     * @return Support\AdapterSupport
+     * @return SupportCheck
      */
     public function supportsTask(Task\TaskInterface $task);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return ValidationCheck
+     */
+    public function validateTask(Task\TaskInterface $task);
 
     /**
      * @param Task\TaskInterface $task
