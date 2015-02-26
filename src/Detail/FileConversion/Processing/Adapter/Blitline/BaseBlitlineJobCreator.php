@@ -11,6 +11,7 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
     BlitlineJobCreatorInterface
 {
     const FUNCTION_RESIZE_TO_FIT = 'resize_to_fit';
+    const FUNCTION_SCRIPT        = 'script';
 
     /**
      * @var string[]
@@ -18,6 +19,15 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
     protected static $actionToFunctionMapping = array(
         Action\ThumbnailAction::NAME => self::FUNCTION_RESIZE_TO_FIT, /** @todo Replace with script */
     );
+
+//    protected $actionToFunctionConfig = array(
+//        Action\ThumbnailAction::NAME => array(
+//            'function' => self::FUNCTION_SCRIPT,
+//            'options' => array(
+//                'logentries_token' => '123',
+//            ),
+//        ),
+//    );
 
     /**
      * @return string[]
