@@ -11,9 +11,33 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
     BlitlineJobCreatorInterface
 {
     /**
-     * @var array
+     * @var FunctionProviderInterface
      */
     protected $functions;
+
+    /**
+     * @param FunctionProviderInterface $functions
+     */
+    public function __construct(FunctionProviderInterface $functions)
+    {
+        $this->setFunctions($functions);
+    }
+
+    /**
+     * @return FunctionProviderInterface
+     */
+    public function getFunctions()
+    {
+        return $this->functions;
+    }
+
+    /**
+     * @param FunctionProviderInterface $functions
+     */
+    public function setFunctions(FunctionProviderInterface $functions)
+    {
+        $this->functions = $functions;
+    }
 
     /**
      * Extract task's actions.
@@ -33,27 +57,11 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
      */
     protected function createFunction($action, array $params = array())
     {
-        // Just create a standard function by the same name as the action
-        if (!isset($this->functions[$action])) {
-            return $this->createStandardFunction($action, $params);
-        }
-
-        /** @var Func\FunctionInterface $function */
-        $function = $this->functions[$action];
+        $function = $this->getFunctions()->getFunction($action, $params);
 
         // Update the default option values for pre-configured functions
         $function->applyParams($params);
 
         return $function;
-    }
-
-    /**
-     * @param string $action
-     * @param array $params
-     * @return string
-     */
-    private function createStandardFunction($action, array $params = array())
-    {
-        return new Func\StandardFunction($action, $params);
     }
 }
