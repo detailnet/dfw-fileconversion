@@ -145,6 +145,7 @@ class TaskProcessor implements
             throw new Exception\ProcessingFailedException($message);
         };
 
+        /** @todo Introduce options to disable strict checking option (some adapters may support actions which don't require explicit definition) */
         $check($adapter->supportsTask($task), 'task is not supported');
         $check($adapter->validateTask($task), 'task is invalid');
 

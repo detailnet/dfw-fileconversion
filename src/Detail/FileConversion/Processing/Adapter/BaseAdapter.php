@@ -115,7 +115,7 @@ abstract class BaseAdapter implements
         $actualActions = $this->getTaskActions($task);
 
         $support = new SupportCheck();
-        $support->validate(array_keys($this->getSupportedActions()), $actualActions);
+        $support->validate(array_keys(self::getSupportedActions()), $actualActions);
 
         return $support;
     }

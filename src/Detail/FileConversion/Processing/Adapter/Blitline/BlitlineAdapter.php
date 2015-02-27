@@ -9,7 +9,6 @@ use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Exception;
-use Detail\FileConversion\Processing\Support;
 use Detail\FileConversion\Processing\Task;
 
 class BlitlineAdapter extends Adapter\BaseAdapter
@@ -18,7 +17,7 @@ class BlitlineAdapter extends Adapter\BaseAdapter
      * @var string[]
      */
     protected static $supportedActions = array(
-        Action\ThumbnailAction::NAME => Action\ThumbnailAction::class,
+        Action\ThumbnailAction::NAME => Action\ThumbnailAction::CLASS,
     );
 
     /**
