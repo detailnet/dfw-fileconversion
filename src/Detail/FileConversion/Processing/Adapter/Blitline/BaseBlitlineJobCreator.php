@@ -56,11 +56,11 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
     /**
      * @param string $action
      * @param array $params
-     * @return string
+     * @return Func\FunctionInterface
      */
     protected function createFunction($action, array $params = array())
     {
-        $function = $this->getFunctions()->getFunction($action, $params);
+        $function = $this->getFunctions()->getFunction($action);
 
         // Update the default option values for pre-configured functions
         $function->applyParams($params);

@@ -169,7 +169,7 @@ class ScriptFunction extends BaseFunction
         }
 
         $params = array(
-            'files' => $this->getFiles(),
+            'files' => implode(',', $this->getFiles()),
             'executable' => $executable,
         );
 

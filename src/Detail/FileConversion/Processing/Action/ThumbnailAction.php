@@ -10,7 +10,6 @@ class ThumbnailAction extends BaseAction
      * @var array
      */
     protected static $requiredParams = array(
-        'width',
-        'height',
+        'size',
     );
 }

@@ -12,8 +12,7 @@ interface FunctionProviderInterface
 
     /**
      * @param string $action
-     * @param array $params
      * @return Func\FunctionInterface
      */
-    public function getFunction($action, array $params = array());
+    public function getFunction($action);
 }
