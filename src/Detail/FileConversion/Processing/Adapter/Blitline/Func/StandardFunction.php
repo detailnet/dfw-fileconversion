@@ -11,6 +11,16 @@ class StandardFunction extends BaseFunction
 
     /**
      * @param string $name
+     * @param array $options
+     * @return self
+     */
+    public static function fromOptions($name, array $options)
+    {
+        return new static($name, $options);
+    }
+
+    /**
+     * @param string $name
      * @param array $params
      */
     public function __construct($name, array $params = array())
@@ -55,4 +65,6 @@ class StandardFunction extends BaseFunction
 
         return $params;
     }
+
+
 }

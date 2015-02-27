@@ -10,7 +10,7 @@ abstract class BaseAction implements
     /**
      * @var array
      */
-    protected $requiredParams = array();
+    protected static $requiredParams = array();
 
     /**
      * @return string
@@ -23,8 +23,8 @@ abstract class BaseAction implements
     /**
      * @return array
      */
-    public function getRequiredParams()
+    public static function getRequiredParams()
     {
-        return $this->requiredParams;
+        return static::$requiredParams;
     }
 }

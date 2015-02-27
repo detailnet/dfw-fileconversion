@@ -17,9 +17,12 @@ abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
 
     /**
      * @param FunctionProviderInterface $functions
+     * @param array $options
      */
-    public function __construct(FunctionProviderInterface $functions)
+    public function __construct(FunctionProviderInterface $functions, array $options = array())
     {
+        parent::__construct($options);
+
         $this->setFunctions($functions);
     }
 

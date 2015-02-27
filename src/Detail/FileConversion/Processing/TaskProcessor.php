@@ -130,8 +130,7 @@ class TaskProcessor implements
             }
 
             $message = sprintf(
-                'Given task (identified by "%s") cannot be processed by adapter %s because %s',
-                $task->getProcessId(),
+                'Given task cannot be processed by adapter %s because %s',
                 get_class($adapter),
                 $reason
             );

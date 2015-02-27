@@ -6,10 +6,7 @@ use Detail\FileConversion\Processing\Exception;
 
 class ValueOption extends BaseOption
 {
-    /**
-     * @var string
-     */
-    protected $argument;
+    const NAME = 'value';
 
     /**
      * @var string
@@ -23,29 +20,11 @@ class ValueOption extends BaseOption
      */
     public function __construct($name, $argument, $value = null)
     {
-        parent::__construct($name);
-
-        $this->setArgument($argument);
+        parent::__construct($name, $argument);
 
         if ($value !== null) {
             $this->setValue($value);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getArgument()
-    {
-        return $this->argument;
-    }
-
-    /**
-     * @param string $argument
-     */
-    public function setArgument($argument)
-    {
-        $this->argument = $argument;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Detail\FileConversion\Processing\Adapter\Blitline\Func;
 
+use Detail\FileConversion\Processing\Exception;
+
 class ScriptFunction extends BaseFunction
 {
     /**
@@ -15,18 +17,89 @@ class ScriptFunction extends BaseFunction
     protected $executable;
 
     /**
-     * @var array
+     * @var Script\OptionInterface[]
      */
     protected $options;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $files;
 
     /**
-     * @param string $executable
+     * @param string $name
      * @param array $options
+     * @return self
+     */
+    public static function fromOptions($name, array $options)
+    {
+        if (!isset($options['executable'])) {
+            throw new Exception\InvalidArgumentException('Missing required option "executable"');
+        }
+
+        $executableOptions = array();
+        $files = array();
+
+        if (isset($options['executable_options'])) {
+            if (!is_array($options['executable_options'])) {
+                throw new Exception\InvalidArgumentException(
+                    'Invalid option "executable_options"; value must be an array'
+                );
+            }
+
+            foreach ($options['executable_options'] as $name => $optionConfig) {
+                if (!isset($optionConfig['type'])) {
+                    throw new Exception\InvalidArgumentException(
+                        sprintf(
+                            'Executable option "%s": Missing type',
+                            $name
+                        )
+                    );
+                }
+
+                if (!isset($optionConfig['argument'])) {
+                    throw new Exception\InvalidArgumentException(
+                        sprintf(
+                            'Executable option "%s": Missing argument',
+                            $name
+                        )
+                    );
+                }
+
+                switch ($optionConfig['type']) {
+                    case Script\ValueOption::NAME:
+                        $option = new Script\ValueOption(
+                            $name,
+                            $optionConfig['argument'],
+                            isset($optionConfig['value']) ? $optionConfig['value'] : null
+                        );
+                        break;
+                    case Script\PlainOption::NAME:
+                    default:
+                        $option = new Script\PlainOption($name, $optionConfig['argument']);
+                        break;
+                }
+
+                $executableOptions[] = $option;
+            }
+        }
+
+        if (isset($options['files'])) {
+            if (!is_array($options['files'])) {
+                throw new Exception\InvalidArgumentException(
+                    'Invalid option "files"; value must be an array'
+                );
+            }
+
+            $files = $options['files'];
+        }
+
+        return new static($options['executable'], $executableOptions, $files);
+    }
+
+    /**
+     * @param string $executable
+     * @param Script\OptionInterface[] $options
      * @param array $files
      */
     public function __construct($executable, array $options = array(), array $files = array())
@@ -53,7 +126,7 @@ class ScriptFunction extends BaseFunction
     }
 
     /**
-     * @return array
+     * @return Script\OptionInterface[]
      */
     public function getOptions()
     {
@@ -61,7 +134,7 @@ class ScriptFunction extends BaseFunction
     }
 
     /**
-     * @param array $options
+     * @param Script\OptionInterface[] $options
      */
     public function setOptions(array $options)
     {
@@ -69,7 +142,7 @@ class ScriptFunction extends BaseFunction
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getFiles()
     {
@@ -77,7 +150,7 @@ class ScriptFunction extends BaseFunction
     }
 
     /**
-     * @param array $files
+     * @param string[] $files
      */
     public function setFiles(array $files)
     {
@@ -92,7 +165,7 @@ class ScriptFunction extends BaseFunction
         $executable = $this->getExecutable();
 
         foreach ($this->getOptions() as $option) {
-            $executable .= ' ' . $option;
+            $executable .= ' ' . $option->toString();
         }
 
         $params = array(
@@ -134,7 +207,7 @@ class ScriptFunction extends BaseFunction
 
         foreach ($this->getOptions() as $option) {
             if (!$option instanceof Script\ValueOption) {
-                continue; // Ignore plain-string and no-value options as they provide no (real) params
+                continue; // Ignore no-value options as they provide no (real) params
             }
 
             /** @todo Sometimes, not all values of the script's options should be changeable */

@@ -17,10 +17,5 @@ interface OptionInterface
     /**
      * @return string
      */
-    public function __toString();
-
-    /**
-     * @return string
-     */
     public function toString();
 }

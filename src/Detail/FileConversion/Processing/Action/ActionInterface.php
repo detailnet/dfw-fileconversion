@@ -12,5 +12,5 @@ interface ActionInterface
     /**
      * @return array
      */
-    public function getRequiredParams();
+    public static function getRequiredParams();
 }
