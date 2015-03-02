@@ -167,9 +167,9 @@ class JobBuilder implements
     public function __construct()
     {
         // Set default definition classes
-        $this->setJobClass($this->getDefinitonFqcn('JobDefinition'));
-        $this->setActionClass($this->getDefinitonFqcn('ActionDefinition'));
-        $this->setNotificationClass($this->getDefinitonFqcn('NotificationDefinition'));
+        $this->setJobClass($this->getDefinitionFqcn('JobDefinition'));
+        $this->setActionClass($this->getDefinitionFqcn('ActionDefinition'));
+        $this->setNotificationClass($this->getDefinitionFqcn('NotificationDefinition'));
     }
 
     /**
@@ -179,7 +179,7 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getJobClass(),
-            $this->getDefinitonFqcn('JobDefinitionInterface')
+            $this->getDefinitionFqcn('JobDefinitionInterface')
         );
     }
 
@@ -190,7 +190,7 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getActionClass(),
-            $this->getDefinitonFqcn('ActionDefinitionInterface')
+            $this->getDefinitionFqcn('ActionDefinitionInterface')
         );
     }
 
@@ -201,7 +201,7 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getNotificationClass(),
-            $this->getDefinitonFqcn('NotificationDefinitionInterface')
+            $this->getDefinitionFqcn('NotificationDefinitionInterface')
         );
     }
 

@@ -7,7 +7,7 @@ use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Exception;
 use Detail\FileConversion\Processing\Task;
 
-abstract class BaseBlitlineJobCreator extends Adapter\BaseJobCreator implements
+abstract class BaseInternalJobCreator extends Adapter\BaseJobCreator implements
     InternalJobCreatorInterface
 {
     /**
