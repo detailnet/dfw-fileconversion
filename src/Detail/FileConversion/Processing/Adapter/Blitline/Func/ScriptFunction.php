@@ -80,7 +80,7 @@ class ScriptFunction extends BaseFunction
                         break;
                 }
 
-                $executableOptions[] = $option;
+                $executableOptions[$name] = $option;
             }
         }
 
