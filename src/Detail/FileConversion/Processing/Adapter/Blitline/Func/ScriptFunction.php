@@ -47,7 +47,7 @@ class ScriptFunction extends BaseFunction
                 );
             }
 
-            $executableOptions = self::getExcutableOptions($options['executable_options']);
+            $executableOptions = self::getExecutableOptions($options['executable_options']);
         }
 
         if (isset($options['files'])) {
@@ -196,7 +196,7 @@ class ScriptFunction extends BaseFunction
      * @param array $optionsConfig
      * @return Script\OptionInterface[]
      */
-    private static function getExcutableOptions(array $optionsConfig)
+    private static function getExecutableOptions(array $optionsConfig)
     {
         $executableOptions = array();
 

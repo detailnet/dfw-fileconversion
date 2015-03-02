@@ -248,7 +248,7 @@ class TaskProcessor implements
             $adapter = $this->getDefaultAdapter();
         } else {
             throw new Exception\RuntimeException(
-                'Task does not specifiy an adapter and no default adapter was registered'
+                'Task does not specify an adapter and no default adapter was registered'
             );
         }
 

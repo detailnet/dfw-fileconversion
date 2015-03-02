@@ -117,9 +117,9 @@ class JobBuilder implements
             return $options;
         }
 
-        $jobInterface          = $this->getDefinitonFqcn('JobDefinitionInterface');
-        $actionInterface       = $this->getDefinitonFqcn('ActionDefinitionInterface');
-        $notificationInterface = $this->getDefinitonFqcn('NotificationDefinitionInterface');
+        $jobInterface          = $this->getDefinitionFqcn('JobDefinitionInterface');
+        $actionInterface       = $this->getDefinitionFqcn('ActionDefinitionInterface');
+        $notificationInterface = $this->getDefinitionFqcn('NotificationDefinitionInterface');
 
         $prefix = null;
         $prefixSeparator = '.';
@@ -234,7 +234,7 @@ class JobBuilder implements
      * @param string $class
      * @return string
      */
-    protected function getDefinitonFqcn($class)
+    protected function getDefinitionFqcn($class)
     {
         return __NAMESPACE__ . '\\Definition\\' . $class;
     }

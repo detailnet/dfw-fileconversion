@@ -6,13 +6,19 @@ use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Response\Job;
 
+use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Task;
 use Detail\FileConversion\Processing\Exception;
 
 class InternalAdapter extends Adapter\BaseAdapter
 {
-//    const OPTION_NOTIFICATION_URL = 'notification_url';
+    /**
+     * @var string[]
+     */
+    protected static $supportedActions = array(
+        Action\ThumbnailAction::NAME => Action\ThumbnailAction::CLASS,
+    );
 
     /**
      * @var FileConversionClient
@@ -230,5 +236,23 @@ class InternalAdapter extends Adapter\BaseAdapter
         }
 
         return $job;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return string[]
+     */
+    protected function getTaskActions(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActions($task);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    protected function getTaskActionParams(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActionParams($task);
     }
 }
