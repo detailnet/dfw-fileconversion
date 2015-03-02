@@ -235,5 +235,7 @@ class ScriptFunction extends BaseFunction
 
             $executableOptions[$name] = $option;
         }
+
+        return $executableOptions;
     }
 }
