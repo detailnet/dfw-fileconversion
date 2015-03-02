@@ -59,6 +59,6 @@ class ValueOption extends BaseOption
             );
         }
 
-        return '-' . $this->getArgument() . ' ' . $value;
+        return '-' . $this->getArgument() . ' ' . escapeshellarg($value);
     }
 }
