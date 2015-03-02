@@ -6,11 +6,29 @@ use Detail\FileConversion\Processing\Task;
 
 interface AdapterInterface
 {
-//    /**
-//     * @param string $actionName
-//     * @return bool
-//     */
-//    public function supportsAction($actionName);
+    /**
+     * @param string $actionName
+     * @return boolean
+     */
+    public function supportsAction($actionName);
+
+    /**
+     * @param array $actions
+     * @return boolean
+     */
+    public function supportsActions(array $actions);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return SupportCheck
+     */
+    public function supportsTask(Task\TaskInterface $task);
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return ValidationCheck
+     */
+    public function validateTask(Task\TaskInterface $task);
 
     /**
      * @param Task\TaskInterface $task

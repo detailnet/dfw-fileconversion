@@ -124,9 +124,32 @@ class TaskProcessor implements
     {
         $adapter = $this->getAdapter($task);
 
-//        $adapter->supportsTask($task);
-//        // or
-//        $adapter->supportsAction($task->getAction());
+        $check = function(Adapter\BaseCheck $check, $reason) use ($adapter, $task) {
+            if ($check->isValid()) {
+                return;
+            }
+
+            $message = sprintf(
+                'Given task cannot be processed by adapter %s because %s',
+                get_class($adapter),
+                $reason
+            );
+
+            $reasons = $check->getMessages();
+
+            if (count($reasons)) {
+                $message .=  ': ' . implode(', ', $reasons);
+            }
+
+            throw new Exception\ProcessingFailedException($message);
+        };
+
+        /**
+         * @todo Introduce options to disable strict checking option
+         *       (some adapters may support actions which don't require explicit definition)
+         */
+        $check($adapter->supportsTask($task), 'task is not supported');
+        $check($adapter->validateTask($task), 'task is invalid');
 
         $processId = $this->callAdapter($adapter, __FUNCTION__, array($task));
 
@@ -225,7 +248,7 @@ class TaskProcessor implements
             $adapter = $this->getDefaultAdapter();
         } else {
             throw new Exception\RuntimeException(
-                'Task does not specifiy an adapter and no default adapter was registered'
+                'Task does not specify an adapter and no default adapter was registered'
             );
         }
 

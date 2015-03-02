@@ -1,20 +1,25 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Adapter;
+namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
 use Detail\Blitline\Client\BlitlineClient;
 use Detail\Blitline\Client\Exception as BlitlineClientException;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
-use Detail\FileConversion\Processing\Task;
+use Detail\FileConversion\Processing\Action;
+use Detail\FileConversion\Processing\Adapter;
 use Detail\FileConversion\Processing\Exception;
+use Detail\FileConversion\Processing\Task;
 
-class BlitlineAdapter extends BaseAdapter //implements
-//    Features\Polling,
-//    Features\SynchronousProcessing,
-//    Features\AsynchronousProcessing,
-//    Features\Saving
+class BlitlineAdapter extends Adapter\BaseAdapter
 {
+    /**
+     * @var string[]
+     */
+    protected static $supportedActions = array(
+        Action\ThumbnailAction::NAME => Action\ThumbnailAction::CLASS,
+    );
+
     /**
      * @var BlitlineClient
      */
@@ -194,15 +199,6 @@ class BlitlineAdapter extends BaseAdapter //implements
         );
     }
 
-//    /**
-//     * @param string $actionName
-//     * @return bool
-//     */
-//    public function supportsAction($actionName)
-//    {
-//        /** @todo Replace with real implementation */
-//        return true;
-//    }
 //
 //    /**
 //     * @param string $type
@@ -259,5 +255,23 @@ class BlitlineAdapter extends BaseAdapter //implements
         }
 
         return $response;
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return string[]
+     */
+    protected function getTaskActions(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActions($task);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    protected function getTaskActionParams(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActionParams($task);
     }
 }
