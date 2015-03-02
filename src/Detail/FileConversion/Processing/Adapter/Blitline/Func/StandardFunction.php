@@ -65,6 +65,4 @@ class StandardFunction extends BaseFunction
 
         return $params;
     }
-
-
 }

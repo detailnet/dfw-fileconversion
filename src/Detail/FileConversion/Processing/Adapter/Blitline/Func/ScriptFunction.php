@@ -47,41 +47,7 @@ class ScriptFunction extends BaseFunction
                 );
             }
 
-            foreach ($options['executable_options'] as $name => $optionConfig) {
-                if (!isset($optionConfig['type'])) {
-                    throw new Exception\InvalidArgumentException(
-                        sprintf(
-                            'Executable option "%s": Missing type',
-                            $name
-                        )
-                    );
-                }
-
-                if (!isset($optionConfig['argument'])) {
-                    throw new Exception\InvalidArgumentException(
-                        sprintf(
-                            'Executable option "%s": Missing argument',
-                            $name
-                        )
-                    );
-                }
-
-                switch ($optionConfig['type']) {
-                    case Script\ValueOption::NAME:
-                        $option = new Script\ValueOption(
-                            $name,
-                            $optionConfig['argument'],
-                            isset($optionConfig['value']) ? $optionConfig['value'] : null
-                        );
-                        break;
-                    case Script\PlainOption::NAME:
-                    default:
-                        $option = new Script\PlainOption($name, $optionConfig['argument']);
-                        break;
-                }
-
-                $executableOptions[$name] = $option;
-            }
+            $executableOptions = self::getExcutableOptions($options['executable_options']);
         }
 
         if (isset($options['files'])) {
@@ -224,5 +190,50 @@ class ScriptFunction extends BaseFunction
     protected function getOption($name)
     {
         return isset($this->options[$name]) ? $this->options[$name] : null;
+    }
+
+    /**
+     * @param array $optionsConfig
+     * @return Script\OptionInterface[]
+     */
+    private static function getExcutableOptions(array $optionsConfig)
+    {
+        $executableOptions = array();
+
+        foreach ($optionsConfig as $name => $optionConfig) {
+            if (!isset($optionConfig['type'])) {
+                throw new Exception\InvalidArgumentException(
+                    sprintf(
+                        'Executable option "%s": Missing type',
+                        $name
+                    )
+                );
+            }
+
+            if (!isset($optionConfig['argument'])) {
+                throw new Exception\InvalidArgumentException(
+                    sprintf(
+                        'Executable option "%s": Missing argument',
+                        $name
+                    )
+                );
+            }
+
+            switch ($optionConfig['type']) {
+                case Script\ValueOption::NAME:
+                    $option = new Script\ValueOption(
+                        $name,
+                        $optionConfig['argument'],
+                        isset($optionConfig['value']) ? $optionConfig['value'] : null
+                    );
+                    break;
+                case Script\PlainOption::NAME:
+                default:
+                    $option = new Script\PlainOption($name, $optionConfig['argument']);
+                    break;
+            }
+
+            $executableOptions[$name] = $option;
+        }
     }
 }
