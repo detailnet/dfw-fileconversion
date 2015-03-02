@@ -40,12 +40,10 @@ $job = $jobBuilder->createJob()
     ->setSourceUrl($imageUrl)
     ->addAction(
         $jobBuilder->createAction()
-            ->setName('resize_to_fit')
+            ->setName('thumbnail')
             ->setParams(
                 array(
-                    'width' => $imageSize,
-                    'height' => $imageSize,
-//                    'only_shrink_larger' => true, // Don't upscale image
+                    'size' => $imageSize,
                 )
             )
             ->setSaveOptions(
