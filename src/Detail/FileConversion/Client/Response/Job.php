@@ -142,7 +142,7 @@ class Job extends BaseResponse
      */
     protected function createAction(array $data)
     {
-        return new Action($data);
+        return Action::fromResult($data);
     }
 
     /**
@@ -151,7 +151,7 @@ class Job extends BaseResponse
      */
     protected function createNotification(array $data)
     {
-        return new Notification($data);
+        return Notification::fromResult($data);
     }
 
     /**
@@ -160,6 +160,6 @@ class Job extends BaseResponse
      */
     protected function createResult(array $data)
     {
-        return new Result($data);
+        return Result::fromResult($data);
     }
 }

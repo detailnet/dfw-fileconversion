@@ -91,9 +91,8 @@ class InternalAdapter extends Adapter\BaseAdapter
             $response = $client->submitJob($job);
             return $response->getId();
 
-        } catch (ClientException\BadRequestException $e) {
-            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
-            // Note that the request could have timed out...
+        } catch (ClientException\ServerException $e) {
+            // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
                 sprintf(
@@ -103,10 +102,9 @@ class InternalAdapter extends Adapter\BaseAdapter
                 0,
                 $e
             );
-        } catch (ClientException\BadResponseException $e) {
-            // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if DWS FileConversion's having server side problems - in case of 5xx errors).
-            // Either way, we need to fail...
+        } catch (ClientException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
                 0,
@@ -133,10 +131,9 @@ class InternalAdapter extends Adapter\BaseAdapter
         try {
             $job = $client->fetchJob(array('job_id' => $task->getProcessId()));
 
-        } catch (ClientException\BadRequestException $e) {
-            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
-            // Note that the request could have timed out...
-            // It's possible, the processing can be checked upon retry.
+        } catch (ClientException\ServerException $e) {
+            // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
+            // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
                 sprintf(
                     'Failed to check processing because DWS FileConversion seems to be unavailable: %s',
@@ -145,10 +142,9 @@ class InternalAdapter extends Adapter\BaseAdapter
                 0,
                 $e
             );
-        } catch (ClientException\BadResponseException $e) {
-            // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if DWS FileConversion's having server side problems - in case of 5xx errors).
-            // Either way, we need to fail...
+        } catch (ClientException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed after checking the job: %s', $e->getMessage()),
                 0,
@@ -228,7 +224,7 @@ class InternalAdapter extends Adapter\BaseAdapter
     protected function getJobResponse($job)
     {
         if (is_array($job)) {
-            $job = new Job($job);
+            $job = Job::fromResult($job);
         } elseif (!$job instanceof Job) {
             throw new Exception\RuntimeException(
                 'Invalid response; expected array or Detail\FileConversion\Client\Response\Job object'

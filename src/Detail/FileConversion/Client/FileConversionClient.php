@@ -2,11 +2,13 @@
 
 namespace Detail\FileConversion\Client;
 
-use Guzzle\Common\Collection;
-use Guzzle\Service\Client;
-use Guzzle\Service\Description\ServiceDescription;
+use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\ClientInterface as HttpClientInterface;
+use GuzzleHttp\Command\Guzzle\Description as ServiceDescription;
+use GuzzleHttp\Command\Guzzle\DescriptionInterface as ServiceDescriptionInterface;
+use GuzzleHttp\Command\Guzzle\GuzzleClient as ServiceClient;
 
-//use Detail\FileConversion\Client\Exception\InvalidArgumentException;
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Subscriber;
 use Detail\FileConversion\Client\Job\Definition\DefinitionInterface;
 use Detail\FileConversion\Client\Job\JobBuilder;
@@ -20,20 +22,43 @@ use Detail\FileConversion\Client\Response;
  * @method Response\Job fetchJob(array $params = array())
  * @method Response\Job submitJob(mixed $job = array())
  */
-class FileConversionClient extends Client
+class FileConversionClient extends ServiceClient
 {
     const CLIENT_VERSION = '0.6.0';
+
+    const OPTION_APP_ID  = 'dws_app_id';
+    const OPTION_APP_KEY = 'dws_app_key';
+
+    const HEADER_APP_ID  = 'DWS-App-ID';
+    const HEADER_APP_KEY = 'DWS-App-Key';
 
     /**
      * @var JobBuilderInterface
      */
     protected $jobBuilder;
 
+    /**
+     * @param array $options
+     * @param JobBuilderInterface|null $jobBuilder
+     * @return FileConversionClient
+     */
     public static function factory($options = array(), JobBuilderInterface $jobBuilder = null)
     {
+//        $requiredOptions = array(
+//            'application_id',
+//        );
+//
+//        foreach ($requiredOptions as $optionName) {
+//            if (!isset($options[$optionName]) || $options[$optionName] === '') {
+//                throw new Exception\InvalidArgumentException(
+//                    sprintf('Missing required configuration option "%s"', $optionName)
+//                );
+//            }
+//        }
+
         $defaultOptions = array(
-            'base_url' => 'http://fileconversion.dws.detailnet.ch/api',
-            'request.options' => array(
+            'base_url' => 'https://dws-fileconversion.detailnet.ch/api',
+            'defaults' => array(
                 // Float describing the number of seconds to wait while trying to connect to a server.
                 // 0 was the default (wait indefinitely).
                 'connect_timeout' => 10,
@@ -43,47 +68,88 @@ class FileConversionClient extends Client
             ),
         );
 
-//        $requiredOptions = array();
-//
-//        foreach ($requiredOptions as $optionName) {
-//            if (!isset($options[$optionName]) || $options[$optionName] === '') {
-//                throw new InvalidArgumentException(
-//                    sprintf('Missing required configuration option "%s"', $optionName)
-//                );
-//            }
-//        }
-
-        $config = Collection::fromConfig($options, $defaultOptions);
-
         $headers = array(
             'Accept' => 'application/json',
+            'User-Agent' => 'dfw-fileconversion/' . self::CLIENT_VERSION,
         );
 
-        if (isset($options['dws_app_id'])) {
-            $headers['DWS-App-ID'] = $options['dws_app_id'];
+        if (isset($options[self::OPTION_APP_ID])) {
+            $headers[self::HEADER_APP_ID] = $options[self::OPTION_APP_ID];
         }
 
-        if (isset($options['dws_app_key'])) {
-            $headers['DWS-App-Key'] = $options['dws_app_key'];
+        if (isset($options[self::OPTION_APP_KEY])) {
+            $headers[self::HEADER_APP_KEY] = $options[self::OPTION_APP_KEY];
         }
 
-        $client = new self($config->get('base_url'), $config, $jobBuilder);
-//        $client->setDefaultOption(
-//            'query',
-//            array(
-//                'application_id' => $config['application_id'],
-//            )
-//        );
-        $client->setDefaultOption('headers', $headers);
-        $client->setDescription(
-            ServiceDescription::factory(__DIR__ . '/ServiceDescription/FileConversion.php')
+        // These are always applied
+        $overrideOptions = array(
+            'defaults' => array(
+                // We're using our own error handler
+                // (this disables the use of the internal HttpError subscriber)
+                'exceptions' => false,
+                'headers' => $headers,
+            ),
         );
-        $client->setUserAgent('dfw-fileconversion/' . self::CLIENT_VERSION, true);
 
-        $client->getEventDispatcher()->addSubscriber(new Subscriber\ErrorHandlerSubscriber());
-        $client->getEventDispatcher()->addSubscriber(new Subscriber\RequestOptionsSubscriber());
+        // Apply options
+        $config = array_replace_recursive($defaultOptions, $options, $overrideOptions);
+
+        $httpClient = new HttpClient($config);
+        $httpClient->getEmitter()->attach(new Subscriber\Http\ProcessError());
+
+        $description = new ServiceDescription(require __DIR__ . '/ServiceDescription/FileConversion.php');
+        $client = new static($httpClient, $description, $jobBuilder);
 
         return $client;
+    }
+
+    /**
+     * @param HttpClientInterface $client
+     * @param ServiceDescriptionInterface $description
+     * @param JobBuilderInterface $jobBuilder
+     */
+    public function __construct(
+        HttpClientInterface $client,
+        ServiceDescriptionInterface $description,
+        JobBuilderInterface $jobBuilder = null
+    ) {
+        $config = array(
+            'process' => false, // Don't use Guzzle Service's processing (we're rolling our own...)
+        );
+
+        parent::__construct($client, $description, $config);
+
+        if ($jobBuilder !== null) {
+            $this->setJobBuilder($jobBuilder);
+        }
+
+        $emitter = $this->getEmitter();
+        $emitter->attach(new Subscriber\Command\PrepareRequest($description));
+        $emitter->attach(new Subscriber\Command\ProcessResponse($description));
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getServiceAppId()
+    {
+        return $this->getHeaderOption(self::HEADER_APP_ID);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getServiceAppKey()
+    {
+        return $this->getHeaderOption(self::HEADER_APP_KEY);
+    }
+
+    /**
+     * @return string
+     */
+    public function getServiceUrl()
+    {
+        return $this->getHttpClient()->getBaseUrl();
     }
 
     /**
@@ -109,31 +175,11 @@ class FileConversionClient extends Client
     }
 
     /**
-     * @return \Guzzle\Http\Message\RequestFactoryInterface
+     * @param string $method
+     * @param array $args
+     * @return mixed
      */
-    public function getRequestFactory()
-    {
-        return $this->requestFactory;
-    }
-
-    /**
-     * @param string $baseUrl
-     * @param array|Collection $config
-     * @param JobBuilderInterface $jobBuilder
-     */
-    public function __construct($baseUrl = '', $config = null, JobBuilderInterface $jobBuilder = null)
-    {
-        parent::__construct($baseUrl, $config);
-
-        if ($jobBuilder !== null) {
-            $this->setJobBuilder($jobBuilder);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __call($method, $args)
+    public function __call($method, array $args)
     {
         if (isset($args[0]) && $args[0] instanceof DefinitionInterface) {
             /** @var DefinitionInterface $definition */
@@ -141,6 +187,23 @@ class FileConversionClient extends Client
             $args[0] = $definition->toArray();
         }
 
-        return parent::__call($method, $args);
+        // It seems we can't intercept Guzzle's request exceptions through the event system...
+        // e.g. when http://api.blitline.com/ is unreachable or the request times out.
+        try {
+            return parent::__call($method, $args);
+        } catch (\Exception $e) {
+            throw Exception\OperationException::wrapException($e);
+        }
+    }
+
+    /**
+     * @param string $option
+     * @return string|null
+     */
+    protected function getHeaderOption($option)
+    {
+        $headers = $this->getHttpClient()->getDefaultOption('headers');
+
+        return array_key_exists($option, $headers) ? $headers[$option] : null;
     }
 }

@@ -5,8 +5,8 @@ namespace Detail\FileConversion\Client\Response;
 interface ResponseInterface
 {
     /**
-     * @param string $key
+     * @param string $expression
      * @return array|mixed
      */
-    public function getResult($key = null);
+    public function getResult($expression = null);
 }
