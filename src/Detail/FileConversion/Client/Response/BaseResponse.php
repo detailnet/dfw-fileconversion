@@ -68,7 +68,7 @@ abstract class BaseResponse implements
      * @param boolean $failOnNull
      * @return array|mixed|null
      */
-    public function getResult($expression = null, $failOnNull = false)
+    public function getResult($expression = null, $failOnNull = true)
     {
         if ($this->result === null) {
             try {

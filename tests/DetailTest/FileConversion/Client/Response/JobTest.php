@@ -4,17 +4,29 @@ namespace DetailTest\FileConversion\Client\Response;
 
 use DateTime;
 
+use Detail\FileConversion\Client\Exception;
+use Detail\FileConversion\Client\Response\Action;
 use Detail\FileConversion\Client\Response\Job;
+use Detail\FileConversion\Client\Response\Notification;
+use Detail\FileConversion\Client\Response\Result;
 
 class JobTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = Job::fromCommand(
-            $this->getCommand(array('results' => array()))
-        );
+        $response = Job::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Job', $response);
+        $this->assertInstanceOf(Job::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = Job::fromResult(array($key => $value));
+        $this->assertInstanceOf(Job::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testIdCanBeGet()
@@ -28,11 +40,11 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getId();
     }
 
-    public function testSourceUrlBeGet()
+    public function testSourceUrlCanBeGet()
     {
         $url = 'some-id';
         $result = array('source_url' => $url);
@@ -43,7 +55,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSourceUrl();
     }
 
@@ -54,11 +66,11 @@ class JobTest extends ResponseTestCase
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($meta, $response->getSourceMeta(true));
+        $this->assertEquals($meta, $response->getSourceMeta());
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSourceMeta();
     }
 
@@ -73,7 +85,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getStatus();
     }
 
@@ -88,7 +100,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getActionCount();
     }
 
@@ -107,17 +119,17 @@ class JobTest extends ResponseTestCase
 
         $responseActions = $response->getActions();
 
-        /** @var \Detail\FileConversion\Client\Response\Action $responseAction */
+        /** @var Action $responseAction */
         $responseAction = $responseActions[0];
 
         $this->assertTrue(is_array($responseActions));
         $this->assertCount(1, $responseActions);
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Action', $responseAction);
+        $this->assertInstanceOf(Action::CLASS, $responseAction);
         $this->assertEquals($name, $responseAction->getName());
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getActions();
     }
 
@@ -132,7 +144,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getNotificationCount();
     }
 
@@ -151,12 +163,12 @@ class JobTest extends ResponseTestCase
 
         $responseNotifications = $response->getNotifications();
 
-        /** @var \Detail\FileConversion\Client\Response\Notification $responseNotification */
+        /** @var Notification $responseNotification */
         $responseNotification = $responseNotifications[0];
 
         $this->assertTrue(is_array($responseNotifications));
         $this->assertCount(1, $responseNotifications);
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Notification', $responseNotification);
+        $this->assertInstanceOf(Notification::CLASS, $responseNotification);
         $this->assertEquals($type, $responseNotification->getType());
 
         $emptyResponse = $this->getResponse();
@@ -176,7 +188,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getResultCount();
     }
 
@@ -195,12 +207,12 @@ class JobTest extends ResponseTestCase
 
         $responseResults = $response->getResults();
 
-        /** @var \Detail\FileConversion\Client\Response\Result $responseResult */
+        /** @var Result $responseResult */
         $responseResult = $responseResults[0];
 
         $this->assertTrue(is_array($responseResults));
         $this->assertCount(1, $responseResults);
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Result', $responseResult);
+        $this->assertInstanceOf(Result::CLASS, $responseResult);
         $this->assertEquals($identifier, $responseResult->getIdentifier());
 
         $emptyResponse = $this->getResponse();
@@ -220,7 +232,7 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSubmittedOn();
     }
 
@@ -274,7 +286,7 @@ class JobTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\Job';
+            $class = Job::CLASS;
         }
 
         return parent::getResponse($data, $class);

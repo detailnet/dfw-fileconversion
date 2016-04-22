@@ -2,17 +2,26 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Response\SaveOptions;
 
 class SaveOptionsTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = SaveOptions::fromCommand(
-            $this->getCommand(array('results' => array()))
-        );
+        $response = SaveOptions::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\SaveOptions', $response);
+        $this->assertInstanceOf(SaveOptions::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = SaveOptions::fromResult(array($key => $value));
+        $this->assertInstanceOf(SaveOptions::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testIdentifierCanBeGet()
@@ -40,7 +49,7 @@ class SaveOptionsTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getType();
     }
 
@@ -56,7 +65,7 @@ class SaveOptionsTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
@@ -68,7 +77,7 @@ class SaveOptionsTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\SaveOptions';
+            $class = SaveOptions::CLASS;
         }
 
         return parent::getResponse($data, $class);

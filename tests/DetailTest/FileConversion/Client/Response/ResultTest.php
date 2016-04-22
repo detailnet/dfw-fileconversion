@@ -2,17 +2,26 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Response\Result;
 
 class ResultTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = Result::fromCommand(
-            $this->getCommand(array('results' => array()))
-        );
+        $response = Result::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Result', $response);
+        $this->assertInstanceOf(Result::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = Result::fromResult(array($key => $value));
+        $this->assertInstanceOf(Result::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testIdCanBeGet()
@@ -26,7 +35,7 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getId();
     }
 
@@ -55,7 +64,7 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getUrl();
     }
 
@@ -71,7 +80,7 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getMeta();
     }
 
@@ -83,7 +92,7 @@ class ResultTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\Result';
+            $class = Result::CLASS;
         }
 
         return parent::getResponse($data, $class);

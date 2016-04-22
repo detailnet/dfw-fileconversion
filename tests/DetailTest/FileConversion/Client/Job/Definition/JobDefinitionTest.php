@@ -8,9 +8,12 @@ use Detail\FileConversion\Client\Job\Definition\NotificationDefinition;
 
 class JobDefinitionTest extends DefinitionTestCase
 {
+    /**
+     * @return string
+     */
     protected function getDefinitionClass()
     {
-        return 'Detail\FileConversion\Client\Job\Definition\JobDefinition';
+        return JobDefinition::CLASS;
     }
 
     public function testSourceUrlCanBeSet()

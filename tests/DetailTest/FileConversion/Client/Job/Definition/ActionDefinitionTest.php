@@ -6,9 +6,12 @@ use Detail\FileConversion\Client\Job\Definition\ActionDefinition;
 
 class ActionDefinitionTest extends DefinitionTestCase
 {
+    /**
+     * @return string
+     */
     protected function getDefinitionClass()
     {
-        return 'Detail\FileConversion\Client\Job\Definition\ActionDefinition';
+        return ActionDefinition::CLASS;
     }
 
     public function testNameCanBeSet()

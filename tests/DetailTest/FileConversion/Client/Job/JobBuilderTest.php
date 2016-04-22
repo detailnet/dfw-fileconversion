@@ -4,6 +4,8 @@ namespace DetailTest\FileConversion\Client\Job;
 
 use PHPUnit_Framework_TestCase as TestCase;
 
+use Detail\FileConversion\Client\Exception as ClientException;
+use Detail\FileConversion\Client\Job\Definition;
 use Detail\FileConversion\Client\Job\JobBuilder;
 
 class JobBuilderTest extends TestCase
@@ -85,7 +87,7 @@ class JobBuilderTest extends TestCase
     public function testJobClassCanBeSet()
     {
         $this->assertEquals(
-            'Detail\FileConversion\Client\Job\Definition\JobDefinition',
+            Definition\JobDefinition::CLASS,
             $this->jobBuilder->getJobClass()
         );
 
@@ -99,7 +101,7 @@ class JobBuilderTest extends TestCase
     public function testActionClassCanBeSet()
     {
         $this->assertEquals(
-            'Detail\FileConversion\Client\Job\Definition\ActionDefinition',
+            Definition\ActionDefinition::CLASS,
             $this->jobBuilder->getActionClass()
         );
 
@@ -140,27 +142,27 @@ class JobBuilderTest extends TestCase
     {
         $job = $this->jobBuilder->createJob();
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Job\Definition\JobDefinition', $job);
+        $this->assertInstanceOf(Definition\JobDefinition::CLASS, $job);
     }
 
     public function testCanCreateActionDefinition()
     {
         $action = $this->jobBuilder->createAction();
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Job\Definition\ActionDefinition', $action);
+        $this->assertInstanceOf(Definition\ActionDefinition::CLASS, $action);
     }
 
     public function testCanCreateNotificationDefinition()
     {
         $notification = $this->jobBuilder->createNotification();
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Job\Definition\NotificationDefinition', $notification);
+        $this->assertInstanceOf(Definition\NotificationDefinition::CLASS, $notification);
         $this->assertEquals('webhook', $notification->getType());
     }
 
     public function testDefinitionCreationWithMissingClassThrowsException()
     {
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(ClientException\RuntimeException::CLASS);
 
         $this->jobBuilder->setJobClass('NonExistingDefinitionClass');
         $this->jobBuilder->createJob();
@@ -168,10 +170,10 @@ class JobBuilderTest extends TestCase
 
     public function testDefinitionCreationWithInvalidInterfaceThrowsException()
     {
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(ClientException\RuntimeException::CLASS);
 
         // Using existing class which doesn't implement Detail\FileConversion\Client\Job\JobBuilder\Definition\DefinitionInterface
-        $this->jobBuilder->setJobClass('Detail\FileConversion\Client\Job\JobBuilder');
+        $this->jobBuilder->setJobClass(JobBuilder::CLASS);
         $this->jobBuilder->createJob();
     }
 
@@ -209,9 +211,9 @@ class JobBuilderTest extends TestCase
             array('job.src' => 'job.src', 'function.name' => 'function.name')
         );
 
-        $definition = $this->getMock('Detail\FileConversion\Client\Job\Definition\DefinitionInterface');
+        $definition = $this->getMock(Definition\DefinitionInterface::CLASS);
 
-        /** @var \Detail\FileConversion\Client\Job\Definition\DefinitionInterface $definition */
+        /** @var Definition\DefinitionInterface $definition */
 
         $this->assertEquals(array(), $this->jobBuilder->getDefaultOptions($definition));
     }

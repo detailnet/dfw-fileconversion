@@ -4,6 +4,7 @@ namespace DetailTest\FileConversion\Client\Response;
 
 use DateTime;
 
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Response\BaseResponse;
 
 class BaseResponseTest extends ResponseTestCase
@@ -19,10 +20,10 @@ class BaseResponseTest extends ResponseTestCase
         $this->assertEquals($result, $response->getResult());
         $this->assertArrayHasKey($resultKey, $response->getResult());
         $this->assertEquals($resultValue, $response->getResult($resultKey));
-        $this->assertNull($response->getResult('non-existing-key', false));
+        $this->assertNull($response->getResult('non_existing_key', false));
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
-        $response->getResult('non-existing-key');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $response->getResult('non_existing_key');
     }
 
     public function testDateResultCanBeGet()
@@ -35,10 +36,10 @@ class BaseResponseTest extends ResponseTestCase
 
         $this->assertInstanceOf('DateTime', $response->getDateResult($resultKey));
         $this->assertEquals(new DateTime($resultValue), $response->getDateResult($resultKey));
-        $this->assertNull($response->getDateResult('non-existing-key', false));
+        $this->assertNull($response->getDateResult('non_existing_key', false));
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
-        $response->getDateResult('non-existing-key');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $response->getDateResult('non_existing_key');
     }
 
     /**
@@ -49,7 +50,7 @@ class BaseResponseTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\BaseResponse';
+            $class = BaseResponse::CLASS;
         }
 
         return parent::getResponse($data, $class);

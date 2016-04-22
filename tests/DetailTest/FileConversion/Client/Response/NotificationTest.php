@@ -2,17 +2,27 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Response\Notification;
+use Detail\FileConversion\Client\Response\NotificationCall;
 
 class NotificationTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = Notification::fromCommand(
-            $this->getCommand(array('notifications' => array()))
-        );
+        $response = Notification::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Notification', $response);
+        $this->assertInstanceOf(Notification::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = Notification::fromResult(array($key => $value));
+        $this->assertInstanceOf(Notification::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testTypeCanBeGet()
@@ -26,7 +36,7 @@ class NotificationTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getType();
     }
 
@@ -42,7 +52,7 @@ class NotificationTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
@@ -61,12 +71,12 @@ class NotificationTest extends ResponseTestCase
 
         $responseCalls = $response->getCalls();
 
-        /** @var \Detail\FileConversion\Client\Response\NotificationCall $responseCall */
+        /** @var NotificationCall $responseCall */
         $responseCall = $responseCalls[0];
 
         $this->assertTrue(is_array($responseCalls));
         $this->assertCount(1, $responseCalls);
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\NotificationCall', $responseCall);
+        $this->assertInstanceOf(NotificationCall::CLASS, $responseCall);
         $this->assertEquals($success, $responseCall->isSuccess());
 
         $emptyResponse = $this->getResponse();
@@ -83,7 +93,7 @@ class NotificationTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\Notification';
+            $class = Notification::CLASS;
         }
 
         return parent::getResponse($data, $class);

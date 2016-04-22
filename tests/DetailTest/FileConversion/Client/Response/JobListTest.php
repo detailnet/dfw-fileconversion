@@ -2,17 +2,27 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
+use Detail\FileConversion\Client\Exception;
+use Detail\FileConversion\Client\Response\Job;
 use Detail\FileConversion\Client\Response\JobList;
 
 class JobListTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = JobList::fromCommand(
-            $this->getCommand(array('results' => array()))
-        );
+        $response = JobList::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\JobList', $response);
+        $this->assertInstanceOf(JobList::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = JobList::fromResult(array($key => $value));
+        $this->assertInstanceOf(JobList::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testItemsCanBeGet()
@@ -35,12 +45,12 @@ class JobListTest extends ResponseTestCase
 
         $responseJobs = $response->getItems();
 
-        /** @var \Detail\FileConversion\Client\Response\Job $responseJob */
+        /** @var Job $responseJob */
         $responseJob = $responseJobs[0];
 
         $this->assertTrue(is_array($responseJobs));
         $this->assertCount(1, $responseJobs);
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Job', $responseJob);
+        $this->assertInstanceOf(Job::CLASS, $responseJob);
         $this->assertEquals($id, $responseJob->getId());
         $this->assertEquals($result['page_count'], $response->getPageCount());
         $this->assertEquals($result['page_size'], $response->getPageSize());
@@ -49,7 +59,7 @@ class JobListTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getPageCount();
 
         /** @todo Handle expected exceptions for other methods... */
@@ -63,7 +73,7 @@ class JobListTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\JobList';
+            $class = JobList::CLASS;
         }
 
         return parent::getResponse($data, $class);
