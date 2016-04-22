@@ -9,6 +9,9 @@ class JobDefinition extends BaseDefinition implements
     const OPTION_ACTIONS       = 'actions';
     const OPTION_NOTIFICATIONS = 'notifications';
 
+    /**
+     * @var array
+     */
     protected $options = array(
         self::OPTION_ACTIONS => array(),
         self::OPTION_NOTIFICATIONS => array(),
