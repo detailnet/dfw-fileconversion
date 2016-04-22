@@ -40,6 +40,6 @@ class Notification extends BaseResponse
      */
     protected function createCall(array $data)
     {
-        return new NotificationCall($data);
+        return NotificationCall::fromResult($data);
     }
 }

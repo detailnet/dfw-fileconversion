@@ -4,69 +4,154 @@ namespace Detail\FileConversion\Client\Response;
 
 use DateTime;
 
-use Detail\FileConversion\Client\Exception;
+use GuzzleHttp\Exception\ParseException;
+use GuzzleHttp\Message\Response as HttpResponse;
+use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
+use GuzzleHttp\Stream\Stream;
 
-use Guzzle\Common\Exception\RuntimeException as GuzzleRuntimeException;
-use Guzzle\Service\Command\OperationCommand;
-use Guzzle\Service\Command\ResponseClassInterface as GuzzleResponseInterface;
+use JmesPath\Env as JmesPath;
+
+use Detail\FileConversion\Client\Exception;
 
 abstract class BaseResponse implements
     ResponseInterface,
-    GuzzleResponseInterface
+    \ArrayAccess
 {
+    /**
+     * @var HttpResponseInterface
+     */
+    protected $httpResponse;
+
     /**
      * @var array
      */
-    protected $result = array();
+    protected $result;
 
     /**
-     * @param OperationCommand $command
-     * @return ResponseInterface
+     * @param HttpResponseInterface $response
+     * @return static
      */
-    public static function fromCommand(OperationCommand $command)
+    public static function fromHttpResponse(HttpResponseInterface $response)
     {
-        // Note that we should only get successful responses.
-        // For 4xx and 5xx errors an exception was thrown by our error handler.
-        // The only cases left to handle here is invalid JSON.
-
-        $response = $command->getResponse();
-
-        try {
-            $responseData = $response->json();
-        } catch (GuzzleRuntimeException $e) {
-            throw new Exception\ServerException($e->getMessage(), 0, $e);
-        }
-
-        return new static($responseData);
+        return new static($response);
     }
 
     /**
      * @param array $result
+     * @return static
      */
-    public function __construct(array $result)
+    public static function fromResult(array $result)
     {
-        $this->result = $result;
+        $response = new HttpResponse(200, array(), Stream::factory(json_encode($result)));
+
+        return static::fromHttpResponse($response);
     }
 
     /**
-     * @param string $key
+     * @param HttpResponseInterface $response
+     */
+    public function __construct(HttpResponseInterface $response)
+    {
+        $this->httpResponse = $response;
+    }
+
+    /**
+     * @return HttpResponseInterface
+     */
+    public function getHttpResponse()
+    {
+        return $this->httpResponse;
+    }
+
+    /**
+     * @param string $expression
      * @param boolean $failOnNull
      * @return array|mixed|null
      */
-    public function getResult($key = null, $failOnNull = true)
+    public function getResult($expression = null, $failOnNull = true)
     {
+        if ($this->result === null) {
+            try {
+                $this->result = $this->getHttpResponse()->json() ?: array();
+            } catch (ParseException $e) {
+                // Handle as server exception because it was the server that produces invalid JSON...
+                throw new Exception\ServerException($e->getMessage(), 0, $e);
+            }
+        }
+
         $result = $this->result;
 
-        if ($key !== null) {
-            if (!array_key_exists($key, $result)) {
-                if ($failOnNull !== false) {
-                    throw new Exception\RuntimeException(sprintf('Result does not contain "%s"', $key));
-                } else {
-                    return null;
-                }
-            }
+        if ($expression !== null) {
+            $result = $this->search($expression, $failOnNull);
+        }
 
-            $result = $result[$key];
+        return $result;
+    }
+
+    /**
+     * @param string $expression
+     * @param boolean $failOnNull
+     * @return DateTime|null
+     */
+    public function getDateResult($expression, $failOnNull = true)
+    {
+        $date = $this->getResult($expression, $failOnNull);
+
+        return ($date !== null) ? new DateTime($date) : null;
+    }
+
+    /**
+     * @param string|integer $offset
+     * @return mixed|null
+     */
+    public function offsetGet($offset)
+    {
+        $data = $this->getResult();
+
+        if (isset($data[$offset])) {
+            return $data[$offset];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string|integer $offset
+     * @param mixed $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        throw new Exception\DomainException('Data cannot be set');
+    }
+
+    /**
+     * @param string|integer $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->getResult()[$offset]);
+    }
+
+    /**
+     * @param string|integer $offset
+     */
+    public function offsetUnset($offset)
+    {
+        throw new Exception\DomainException('Data cannot be unset');
+    }
+
+    /**
+     * @param string $expression
+     * @param boolean $failOnNull
+     * @return mixed|null
+     */
+    protected function search($expression, $failOnNull = false)
+    {
+        $result = JmesPath::search($expression, $this->getResult());
+
+        if ($result === null && $failOnNull === true) {
+            throw new Exception\RuntimeException(sprintf('Result does not contain "%s"', $expression));
         }
 
         return $result;
@@ -74,20 +159,8 @@ abstract class BaseResponse implements
 
     /**
      * @param string $key
-     * @param boolean $failOnNull
-     * @return DateTime|null
-     */
-    public function getDateResult($key, $failOnNull = true)
-    {
-        $date = $this->getResult($key, $failOnNull);
-
-        return ($date !== null) ? new DateTime($date) : null;
-    }
-
-    /**
-     * @param string $key
      * @param array $factory
-     * @param bool $asPlainResult
+     * @param boolean $asPlainResult
      * @param boolean $failOnNull
      * @return array|mixed
      */
@@ -117,7 +190,7 @@ abstract class BaseResponse implements
     /**
      * @param string $key
      * @param array $factory
-     * @param bool $asPlainResult
+     * @param boolean $asPlainResult
      * @param boolean $failOnNull
      * @return array|mixed
      */

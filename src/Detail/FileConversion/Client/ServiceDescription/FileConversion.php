@@ -1,5 +1,7 @@
 <?php
 
+use Detail\FileConversion\Client\Response;
+
 return array(
     'name'        => 'DETAIL Web Services - File Conversion Service',
     'operations'  => array(
@@ -22,7 +24,7 @@ return array(
                     'required'    => false,
                 ),
             ),
-            'responseClass' => 'Detail\FileConversion\Client\Response\JobList',
+            'responseClass' => Response\JobList::CLASS,
         ),
         'fetchJob' => array(
             'httpMethod'       => 'GET',
@@ -37,7 +39,7 @@ return array(
                     'required'    => true,
                 ),
             ),
-            'responseClass' => 'Detail\FileConversion\Client\Response\Job',
+            'responseClass' => Response\Job::CLASS,
         ),
         'submitJob' => array(
             'httpMethod'       => 'POST',
@@ -62,7 +64,7 @@ return array(
             'additionalParameters' => array(
                 'location' => 'json',
             ),
-            'responseClass' => 'Detail\FileConversion\Client\Response\Job',
+            'responseClass' => Response\Job::CLASS,
         ),
     ),
 );

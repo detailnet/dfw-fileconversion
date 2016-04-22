@@ -6,9 +6,12 @@ use Detail\FileConversion\Client\Job\Definition\NotificationDefinition;
 
 class NotificationDefinitionTest extends DefinitionTestCase
 {
+    /**
+     * @return string
+     */
     protected function getDefinitionClass()
     {
-        return 'Detail\FileConversion\Client\Job\Definition\NotificationDefinition';
+        return NotificationDefinition::CLASS;
     }
 
     public function testTypeCanBeSet()

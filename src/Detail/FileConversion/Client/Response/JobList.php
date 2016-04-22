@@ -33,6 +33,6 @@ class JobList extends ListResponse
      */
     protected function createJob(array $data)
     {
-        return new Job($data);
+        return Job::fromResult($data);
     }
 }

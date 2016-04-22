@@ -124,7 +124,7 @@ class TaskProcessor implements
     {
         $adapter = $this->getAdapter($task);
 
-        $check = function(Adapter\BaseCheck $check, $reason) use ($adapter, $task) {
+        $check = function (Adapter\BaseCheck $check, $reason) use ($adapter, $task) {
             if ($check->isValid()) {
                 return;
             }

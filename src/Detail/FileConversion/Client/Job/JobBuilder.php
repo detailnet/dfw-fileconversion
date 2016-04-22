@@ -3,7 +3,6 @@
 namespace Detail\FileConversion\Client\Job;
 
 use Detail\FileConversion\Client\Exception\RuntimeException;
-use Detail\FileConversion\Client\Job\Definition\DefinitionInterface;
 
 class JobBuilder implements
     JobBuilderInterface
@@ -11,17 +10,17 @@ class JobBuilder implements
     /**
      * @var string
      */
-    protected $jobClass;
+    protected $jobClass = Definition\JobDefinition::CLASS;
 
     /**
      * @var string
      */
-    protected $actionClass;
+    protected $actionClass = Definition\ActionDefinition::CLASS;
 
     /**
      * @var string
      */
-    protected $notificationClass;
+    protected $notificationClass = Definition\NotificationDefinition::CLASS;
 
     /**
      * @var array
@@ -106,10 +105,10 @@ class JobBuilder implements
     }
 
     /**
-     * @param DefinitionInterface $definition
+     * @param Definition\DefinitionInterface $definition
      * @return array
      */
-    public function getDefaultOptions(DefinitionInterface $definition = null)
+    public function getDefaultOptions(Definition\DefinitionInterface $definition = null)
     {
         $options = $this->defaultOptions;
 
@@ -117,24 +116,20 @@ class JobBuilder implements
             return $options;
         }
 
-        $jobInterface          = $this->getDefinitionFqcn('JobDefinitionInterface');
-        $actionInterface       = $this->getDefinitionFqcn('ActionDefinitionInterface');
-        $notificationInterface = $this->getDefinitionFqcn('NotificationDefinitionInterface');
-
         $prefix = null;
         $prefixSeparator = '.';
 
-        if ($definition instanceof $jobInterface) {
+        if ($definition instanceof Definition\JobDefinitionInterface) {
             $prefix = 'job';
-        } elseif ($definition instanceof $actionInterface) {
+        } elseif ($definition instanceof Definition\ActionDefinitionInterface) {
             $prefix = 'action';
-        } elseif ($definition instanceof $notificationInterface) {
+        } elseif ($definition instanceof Definition\NotificationDefinitionInterface) {
             $prefix = 'notification';
         } else {
             return array();
         }
 
-        $keyMatchesPrefix = function($key) use ($prefix, $prefixSeparator) {
+        $keyMatchesPrefix = function ($key) use ($prefix, $prefixSeparator) {
             $combinedPrefix = $prefix . $prefixSeparator;
 
             return (strpos($key, $combinedPrefix) === 0) && (strlen($key) > strlen($combinedPrefix));
@@ -164,14 +159,6 @@ class JobBuilder implements
         return $this;
     }
 
-    public function __construct()
-    {
-        // Set default definition classes
-        $this->setJobClass($this->getDefinitionFqcn('JobDefinition'));
-        $this->setActionClass($this->getDefinitionFqcn('ActionDefinition'));
-        $this->setNotificationClass($this->getDefinitionFqcn('NotificationDefinition'));
-    }
-
     /**
      * @inheritdoc
      */
@@ -179,7 +166,7 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getJobClass(),
-            $this->getDefinitionFqcn('JobDefinitionInterface')
+            Definition\JobDefinitionInterface::CLASS
         );
     }
 
@@ -190,7 +177,7 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getActionClass(),
-            $this->getDefinitionFqcn('ActionDefinitionInterface')
+            Definition\ActionDefinitionInterface::CLASS
         );
     }
 
@@ -201,14 +188,14 @@ class JobBuilder implements
     {
         return $this->createDefinition(
             $this->getNotificationClass(),
-            $this->getDefinitionFqcn('NotificationDefinitionInterface')
+            Definition\NotificationDefinitionInterface::CLASS
         );
     }
 
     /**
      * @param string $class
      * @param string $interface
-     * @return DefinitionInterface
+     * @return Definition\DefinitionInterface
      */
     protected function createDefinition($class, $interface)
     {
@@ -216,7 +203,7 @@ class JobBuilder implements
             throw new RuntimeException(sprintf('Class "%s" does not exist', $class));
         }
 
-        /** @var DefinitionInterface $definition */
+        /** @var Definition\DefinitionInterface $definition */
         $definition = new $class();
 
         if (!$definition instanceof $interface) {
@@ -228,14 +215,5 @@ class JobBuilder implements
         $definition->applyOptions($this->getDefaultOptions($definition));
 
         return $definition;
-    }
-
-    /**
-     * @param string $class
-     * @return string
-     */
-    protected function getDefinitionFqcn($class)
-    {
-        return __NAMESPACE__ . '\\Definition\\' . $class;
     }
 }

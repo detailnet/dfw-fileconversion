@@ -40,6 +40,6 @@ class Action extends BaseResponse
      */
     protected function createSaveOptions(array $data)
     {
-        return new SaveOptions($data);
+        return SaveOptions::fromResult($data);
     }
 }

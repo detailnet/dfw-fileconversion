@@ -6,10 +6,11 @@ use ArrayObject;
 use RecursiveIteratorIterator;
 use RecursiveArrayIterator;
 
-use Zend\Stdlib\ArrayUtils;
-
 abstract class BaseDefinition
 {
+    /**
+     * @var array
+     */
     protected $options = array();
 
     /**
@@ -35,7 +36,7 @@ abstract class BaseDefinition
      */
     public function applyOptions(array $options)
     {
-        $this->options = ArrayUtils::merge($this->options, $options);
+        $this->options = array_replace_recursive($this->options, $options);
         return $this;
     }
 
@@ -48,7 +49,7 @@ abstract class BaseDefinition
     {
         // Merge if both existing and new option value are arrays...
         if (is_array($value) && isset($this->options[$name]) && is_array($this->options[$name])) {
-            $value = ArrayUtils::merge($this->options[$name], $value);
+            $value = array_replace_recursive($this->options[$name], $value);
         }
 
         $this->options[$name] = $value;
@@ -96,7 +97,7 @@ abstract class BaseDefinition
 
         // Helper function which recursively converts to a normal (recursive) array again.
         // Reference is required for "recursive closure"...
-        $toArray = function($data) use (&$toArray) {
+        $toArray = function ($data) use (&$toArray) {
             if ($data instanceof ArrayObject) {
                 $data = (array) $data;
             }

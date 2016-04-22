@@ -4,12 +4,16 @@ namespace DetailTest\FileConversion\Client\Response;
 
 use PHPUnit_Framework_TestCase as TestCase;
 
+use GuzzleHttp\Message\Response;
+
+use Detail\FileConversion\Client\Response\ResponseInterface;
+
 abstract class ResponseTestCase extends TestCase
 {
     /**
      * @param array $data
      * @param string $class
-     * @return \Detail\FileConversion\Client\Response\ResponseInterface ResponseInterface
+     * @return ResponseInterface
      */
     protected function getResponse(array $data = array(), $class = null)
     {
@@ -17,27 +21,23 @@ abstract class ResponseTestCase extends TestCase
             $class = str_replace('DetailTest\\', 'Detail\\', get_class($this));
         }
 
-        return $this->getMockForAbstractClass($class, array($data));
+        $httpResponse = $this->getHttpResponse($data);
+
+        return $this->getMockForAbstractClass($class, array($httpResponse));
     }
 
     /**
      * @param array $data
-     * @return \Guzzle\Service\Command\OperationCommand
+     * @return Response
      */
-    protected function getCommand(array $data)
+    protected function getHttpResponse(array $data = array())
     {
-        $response = $this->getMock('Guzzle\Http\Message\Response', array(), array(), '', false);
+        $response = $this->getMock(Response::CLASS, array(), array(), '', false);
         $response
             ->expects($this->any())
             ->method('json')
             ->will($this->returnValue($data));
 
-        $command = $this->getMock('Guzzle\Service\Command\OperationCommand');
-        $command
-            ->expects($this->any())
-            ->method('getResponse')
-            ->will($this->returnValue($response));
-
-        return $command;
+        return $response;
     }
 }

@@ -2,17 +2,27 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
+use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\Response\Action;
+use Detail\FileConversion\Client\Response\SaveOptions;
 
 class ActionTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromGuzzleCommand()
+    public function testResponseCanBeCreatedFromHttpResponse()
     {
-        $response = Action::fromCommand(
-            $this->getCommand(array('results' => array()))
-        );
+        $response = Action::fromHttpResponse($this->getHttpResponse());
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\Action', $response);
+        $this->assertInstanceOf(Action::CLASS, $response);
+    }
+
+    public function testResponseCanBeCreatedFromResult()
+    {
+        $key = 'key';
+        $value = 'value';
+
+        $response = Action::fromResult(array($key => $value));
+        $this->assertInstanceOf(Action::CLASS, $response);
+        $this->assertEquals($value, $response->getResult($key));
     }
 
     public function testNameCanBeGet()
@@ -26,7 +36,7 @@ class ActionTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getName();
     }
 
@@ -42,7 +52,7 @@ class ActionTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException('Detail\FileConversion\Client\Exception\RuntimeException');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
@@ -61,7 +71,7 @@ class ActionTest extends ResponseTestCase
 
         $responseSaveOptions = $response->getSaveOptions();
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\Response\SaveOptions', $responseSaveOptions);
+        $this->assertInstanceOf(SaveOptions::CLASS, $responseSaveOptions);
         $this->assertEquals($type, $responseSaveOptions->getType());
 
         $emptyResponse = $this->getResponse();
@@ -77,7 +87,7 @@ class ActionTest extends ResponseTestCase
     protected function getResponse(array $data = array(), $class = null)
     {
         if ($class === null) {
-            $class = 'Detail\FileConversion\Client\Response\Action';
+            $class = Action::CLASS;
         }
 
         return parent::getResponse($data, $class);
