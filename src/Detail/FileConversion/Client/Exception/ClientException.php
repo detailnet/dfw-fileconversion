@@ -2,6 +2,6 @@
 
 namespace Detail\FileConversion\Client\Exception;
 
-class ClientException extends BadResponseException
+class ClientException extends OperationException
 {
 }

@@ -22,7 +22,7 @@ use Detail\FileConversion\Client\Response;
  */
 class FileConversionClient extends Client
 {
-    const CLIENT_VERSION = '0.5.0';
+    const CLIENT_VERSION = '0.6.0';
 
     /**
      * @var JobBuilderInterface
