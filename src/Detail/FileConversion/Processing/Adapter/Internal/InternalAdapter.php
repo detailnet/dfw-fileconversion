@@ -90,7 +90,6 @@ class InternalAdapter extends Adapter\BaseAdapter
         try {
             $response = $client->submitJob($job);
             return $response->getId();
-
         } catch (ClientException\ServerException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
@@ -130,7 +129,6 @@ class InternalAdapter extends Adapter\BaseAdapter
 
         try {
             $job = $client->fetchJob(array('job_id' => $task->getProcessId()));
-
         } catch (ClientException\ServerException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.

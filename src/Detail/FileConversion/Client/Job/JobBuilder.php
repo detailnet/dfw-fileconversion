@@ -129,7 +129,7 @@ class JobBuilder implements
             return array();
         }
 
-        $keyMatchesPrefix = function($key) use ($prefix, $prefixSeparator) {
+        $keyMatchesPrefix = function ($key) use ($prefix, $prefixSeparator) {
             $combinedPrefix = $prefix . $prefixSeparator;
 
             return (strpos($key, $combinedPrefix) === 0) && (strlen($key) > strlen($combinedPrefix));
