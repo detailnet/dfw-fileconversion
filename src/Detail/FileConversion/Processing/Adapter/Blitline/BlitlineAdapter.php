@@ -3,7 +3,7 @@
 namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
 use Detail\Blitline\Client\BlitlineClient;
-use Detail\Blitline\Client\Exception as BlitlineClientException;
+use Detail\Blitline\Exception as BlitlineException;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
 use Detail\FileConversion\Processing\Action;
@@ -91,9 +91,8 @@ class BlitlineAdapter extends Adapter\BaseAdapter
             $response = $client->submitJob($job);
             return $response->getJobId();
 
-        } catch (BlitlineClientException\BadRequestException $e) {
-            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
-            // Note that the request could have timed out...
+        } catch (BlitlineException\ServerException $e) {
+            // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
                 sprintf(
@@ -103,10 +102,9 @@ class BlitlineAdapter extends Adapter\BaseAdapter
                 0,
                 $e
             );
-        } catch (BlitlineClientException\BadResponseException $e) {
-            // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if Blitline's having server side problems - in case of 5xx errors).
-            // Either way, we need to fail...
+        } catch (BlitlineException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
                 0,
@@ -133,10 +131,9 @@ class BlitlineAdapter extends Adapter\BaseAdapter
         try {
             $response = $client->pollJob(array('job_id' => $task->getProcessId()));
 
-        } catch (BlitlineClientException\BadRequestException $e) {
-            // The request couldn't be sent (e.g. network problems, performance issues, etc.)
-            // Note that the request could have timed out...
-            // It's possible, the processing can be checked upon retry.
+        } catch (BlitlineException\ServerException $e) {
+            // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
+            // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
                 sprintf(
                     'Failed to check processing because Blitline seems to be unavailable: %s',
@@ -145,10 +142,9 @@ class BlitlineAdapter extends Adapter\BaseAdapter
                 0,
                 $e
             );
-        } catch (BlitlineClientException\BadResponseException $e) {
-            // 4xx and 5xx problems (we don't know if the problems is only with this job or
-            // if Blitline's having server side problems - in case of 5xx errors).
-            // Either way, we need to fail...
+        } catch (BlitlineException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
             throw new Exception\ProcessingFailedException(
                 sprintf('Processing failed after polling for the completion of the job: %s', $e->getMessage()),
                 0,
@@ -195,7 +191,7 @@ class BlitlineAdapter extends Adapter\BaseAdapter
             $outputs,
             $failedOutputs,
             $response->getOriginalMeta(),
-            array($response->getError())
+            $response->getErrors()
         );
     }
 
@@ -241,7 +237,7 @@ class BlitlineAdapter extends Adapter\BaseAdapter
             }
 
             try {
-                $response = BlitlineJobProcessedResponse::fromRawResponse($response);
+                $response = BlitlineJobProcessedResponse::fromData($response);
             } catch (\Exception $e) {
                 throw new Exception\ProcessingFailedException(
                     sprintf(
