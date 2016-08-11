@@ -75,7 +75,7 @@ abstract class BaseResponse implements
                 $this->result = $this->getHttpResponse()->json() ?: array();
             } catch (ParseException $e) {
                 // Handle as server exception because it was the server that produces invalid JSON...
-                throw new Exception\ServerException($e->getMessage(), 0, $e);
+                throw new Exception\ServerException($e->getMessage(), $e);
             }
         }
 
