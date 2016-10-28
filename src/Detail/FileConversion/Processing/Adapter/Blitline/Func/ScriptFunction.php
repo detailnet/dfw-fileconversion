@@ -131,6 +131,7 @@ class ScriptFunction extends BaseFunction
         $executable = $this->getExecutable();
 
         foreach ($this->getOptions() as $option) {
+            /** @todo When $option->toString() returns empty string, should not add a whitespace */
             $executable .= ' ' . $option->toString();
         }
 
@@ -220,6 +221,13 @@ class ScriptFunction extends BaseFunction
             }
 
             switch ($optionConfig['type']) {
+                case Script\FlagOption::NAME:
+                    $option = new Script\FlagOption(
+                        $name,
+                        $optionConfig['argument'],
+                        isset($optionConfig['value']) ? $optionConfig['value'] : false
+                    );
+                    break;
                 case Script\ValueOption::NAME:
                     $option = new Script\ValueOption(
                         $name,
