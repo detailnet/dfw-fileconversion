@@ -131,7 +131,9 @@ class ScriptFunction extends BaseFunction
         $executable = $this->getExecutable();
 
         foreach ($this->getOptions() as $option) {
-            $executable .= ' ' . $option->toString();
+            if ($option->isEnabled()) {
+                $executable .= ' ' . $option->toString();
+            }
         }
 
         $params = array(
@@ -150,6 +152,11 @@ class ScriptFunction extends BaseFunction
     {
         foreach ($params as $key => $value) {
             $option = $this->getOption($key);
+
+            // A PlainOption can be enabled/disabled trough a boolean value
+            if ($option instanceof Script\PlainOption) { // $option !== null is checked here too
+                $option->setEnabled($value !== false);
+            }
 
             // Ignore:
             // - Params for un-configured options
@@ -224,12 +231,17 @@ class ScriptFunction extends BaseFunction
                     $option = new Script\ValueOption(
                         $name,
                         $optionConfig['argument'],
-                        isset($optionConfig['value']) ? $optionConfig['value'] : null
+                        isset($optionConfig['value']) ? $optionConfig['value'] : null,
+                        isset($optionConfig['enabled']) ? $optionConfig['enabled'] : true
                     );
                     break;
                 case Script\PlainOption::NAME:
                 default:
-                    $option = new Script\PlainOption($name, $optionConfig['argument']);
+                    $option = new Script\PlainOption(
+                        $name,
+                        $optionConfig['argument'],
+                        isset($optionConfig['enabled']) ? $optionConfig['enabled'] : true
+                    );
                     break;
             }
 
