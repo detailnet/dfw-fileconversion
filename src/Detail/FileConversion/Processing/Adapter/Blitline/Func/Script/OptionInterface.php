@@ -15,6 +15,16 @@ interface OptionInterface
     public function setName($name);
 
     /**
+     * @return boolean
+     */
+    public function isEnabled();
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled($enabled);
+
+    /**
      * @return string
      */
     public function toString();
