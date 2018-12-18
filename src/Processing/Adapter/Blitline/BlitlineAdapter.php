@@ -2,9 +2,8 @@
 
 namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
-use GuzzleHttp\Psr7\Response as PsrResponse;
-
 use GuzzleHttp\Exception as GuzzleException;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 
 use Detail\Blitline\BlitlineClient;
 use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;

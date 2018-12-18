@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request as PsrRequest;
 use GuzzleHttp\Psr7\Response as PsrResponse;
 
-use Detail\Blitline\Response\Response;
+use Detail\FileConversion\Client\Response\ResponseInterface;
 
 class Deserializer
 {
@@ -22,7 +22,7 @@ class Deserializer
         $this->description = $description;
     }
 
-    public function __invoke(PsrResponse $response, PsrRequest $request, CommandInterface $command): ?Response
+    public function __invoke(PsrResponse $response, PsrRequest $request, CommandInterface $command): ?ResponseInterface
     {
         $name = $command->getName();
         $operation = $this->description->getOperation($name);
@@ -56,7 +56,7 @@ class Deserializer
 
         /** @todo We could check if the response class implements ResponseInterface */
 
-        /** @var Response $responseClass */
+        /** @var ResponseInterface $responseClass */
 
         return $responseClass::fromOperation($operation, $response);
     }

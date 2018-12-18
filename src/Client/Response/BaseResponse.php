@@ -4,10 +4,8 @@ namespace Detail\FileConversion\Client\Response;
 
 use DateTime;
 
-use GuzzleHttp\Exception\ParseException;
-use GuzzleHttp\Message\Response as HttpResponse;
-use GuzzleHttp\Message\ResponseInterface as HttpResponseInterface;
-use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Command\Guzzle\Operation;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 
 use JmesPath\Env as JmesPath;
 
@@ -18,7 +16,7 @@ abstract class BaseResponse implements
     \ArrayAccess
 {
     /**
-     * @var HttpResponseInterface
+     * @var PsrResponse
      */
     protected $httpResponse;
 
@@ -28,35 +26,36 @@ abstract class BaseResponse implements
     protected $result;
 
     /**
-     * @param HttpResponseInterface $response
-     * @return static
-     */
-    public static function fromHttpResponse(HttpResponseInterface $response)
-    {
-        return new static($response);
-    }
-
-    /**
      * @param array $result
      * @return static
      */
     public static function fromResult(array $result)
     {
-        $response = new HttpResponse(200, [], Stream::factory(json_encode($result)));
+        $response = new PsrResponse(200, [], json_encode($result));
 
-        return static::fromHttpResponse($response);
+        return new static($response);
     }
 
     /**
-     * @param HttpResponseInterface $response
+     * @param Operation $operation
+     * @param PsrResponse $response
+     * @return BaseResponse
      */
-    public function __construct(HttpResponseInterface $response)
+    public static function fromOperation(Operation $operation, PsrResponse $response): ResponseInterface
+    {
+        return new static($response);
+    }
+
+    /**
+     * @param PsrResponse $response
+     */
+    public function __construct(PsrResponse $response)
     {
         $this->httpResponse = $response;
     }
 
     /**
-     * @return HttpResponseInterface
+     * @return PsrResponse
      */
     public function getHttpResponse()
     {
@@ -71,12 +70,7 @@ abstract class BaseResponse implements
     public function getResult($expression = null, $failOnNull = true)
     {
         if ($this->result === null) {
-            try {
-                $this->result = $this->getHttpResponse()->json() ?: [];
-            } catch (ParseException $e) {
-                // Handle as server exception because it was the server that produces invalid JSON...
-                throw new Exception\ServerException($e->getMessage(), $e);
-            }
+            $this->result = $this->extractData();
         }
 
         $result = $this->result;
@@ -121,7 +115,7 @@ abstract class BaseResponse implements
      */
     public function offsetSet($offset, $value)
     {
-        throw new Exception\DomainException('Data cannot be set');
+        throw new Exception\RuntimeException('Data cannot be set');
     }
 
     /**
@@ -138,7 +132,7 @@ abstract class BaseResponse implements
      */
     public function offsetUnset($offset)
     {
-        throw new Exception\DomainException('Data cannot be unset');
+        throw new Exception\RuntimeException('Data cannot be unset');
     }
 
     /**
@@ -155,6 +149,21 @@ abstract class BaseResponse implements
         }
 
         return $result;
+    }
+
+    protected function extractData(): array
+    {
+        try {
+            $data = $this->decodeJson($this->getHttpResponse()->getBody());
+
+            return is_array($data) ? $data : [];
+        } catch (\Exception $e) {
+            throw new Exception\RuntimeException(
+                sprintf('Failed to extract data from HTTP response: %s', $e->getMessage()),
+                $e->getCode(),
+                $e
+            );
+        }
     }
 
     /**
@@ -225,5 +234,33 @@ abstract class BaseResponse implements
         /** @todo Check if response is an ResponseInterface object */
 
         return $response;
+    }
+
+    private function decodeJson(?string $value): array
+    {
+        $data = json_decode($value, true);
+
+        if (!$data) {
+            $message = 'Unknown error';
+            $jsonError = json_last_error();
+
+            if ($jsonError !== JSON_ERROR_NONE) {
+                $jsonMessage = json_last_error_msg();
+
+                if ($jsonMessage !== false) {
+                    $message = $jsonMessage;
+                }
+            }
+
+            throw new Exception\RuntimeException(
+                sprintf('Unable to decode JSON: %s', $message)
+            );
+        } elseif (!is_array($data)) {
+            throw new Exception\RuntimeException(
+                sprintf('Invalid JSON: Expected array but got %s', gettype($data))
+            );
+        }
+
+        return $data;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Detail\FileConversion\Processing\Adapter\Internal;
 
+use GuzzleHttp\Exception as GuzzleException;
+
 use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Response\Job;
@@ -90,7 +92,15 @@ class InternalAdapter extends Adapter\BaseAdapter
         try {
             $response = $client->submitJob($job);
             return $response->getId();
-        } catch (ClientException\ServerException $e) {
+        } catch (GuzzleException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (GuzzleException\RequestException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
@@ -98,14 +108,6 @@ class InternalAdapter extends Adapter\BaseAdapter
                     'Failed to start processing because DWS FileConversion seems to be unavailable: %s',
                     $e->getMessage()
                 ),
-                0,
-                $e
-            );
-        } catch (ClientException\ClientException $e) {
-            // Invalid job or 4xx problems.
-            // Retrying won't change anything, so we need to fail...
-            throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
                 0,
                 $e
             );
@@ -129,7 +131,15 @@ class InternalAdapter extends Adapter\BaseAdapter
 
         try {
             $job = $client->fetchJob(['job_id' => $task->getProcessId()]);
-        } catch (ClientException\ServerException $e) {
+        } catch (GuzzleException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed after checking the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (GuzzleException\RequestException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
@@ -137,14 +147,6 @@ class InternalAdapter extends Adapter\BaseAdapter
                     'Failed to check processing because DWS FileConversion seems to be unavailable: %s',
                     $e->getMessage()
                 ),
-                0,
-                $e
-            );
-        } catch (ClientException\ClientException $e) {
-            // Invalid job or 4xx problems.
-            // Retrying won't change anything, so we need to fail...
-            throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed after checking the job: %s', $e->getMessage()),
                 0,
                 $e
             );

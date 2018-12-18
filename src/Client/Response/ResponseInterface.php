@@ -2,8 +2,13 @@
 
 namespace Detail\FileConversion\Client\Response;
 
+use GuzzleHttp\Command\Guzzle\Operation;
+use GuzzleHttp\Psr7\Response as PsrResponse;
+
 interface ResponseInterface
 {
+    public static function fromOperation(Operation $operation, PsrResponse $response): ResponseInterface;
+
     /**
      * @param string $expression
      * @return array|mixed

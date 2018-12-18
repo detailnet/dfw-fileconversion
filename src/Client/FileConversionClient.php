@@ -125,7 +125,7 @@ class FileConversionClient extends ServiceClient
         return $this->jobBuilder;
     }
 
-    public function setJobBuilder(JobBuilderInterface $jobBuilder): FileConversionClient
+    public function setJobBuilder(JobBuilderInterface $jobBuilder)
     {
         $this->jobBuilder = $jobBuilder;
     }
