@@ -17,10 +17,11 @@ class ValueOption extends BaseOption
      * @param string $name
      * @param string $argument
      * @param string $value
+     * @param boolean $enabled
      */
-    public function __construct($name, $argument, $value = null)
+    public function __construct($name, $argument, $value = null, $enabled = true)
     {
-        parent::__construct($name, $argument);
+        parent::__construct($name, $argument, $enabled);
 
         if ($value !== null) {
             $this->setValue($value);
@@ -41,6 +42,15 @@ class ValueOption extends BaseOption
     public function setValue($value)
     {
         $this->value = trim($value);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        // Option is not enabled if boolean false is passed as value too
+        return parent::isEnabled() && $this->getValue() !== false;
     }
 
     /**

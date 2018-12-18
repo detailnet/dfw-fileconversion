@@ -16,13 +16,20 @@ abstract class BaseOption implements
     protected $argument;
 
     /**
+     * @var boolean
+     */
+    protected $enabled = true;
+
+    /**
      * @param string $name
      * @param string $argument
+     * @param boolean $enabled
      */
-    public function __construct($name, $argument)
+    public function __construct($name, $argument, $enabled = true)
     {
         $this->setName($name);
         $this->setArgument($argument);
+        $this->setEnabled($enabled);
     }
 
     /**
@@ -55,6 +62,22 @@ abstract class BaseOption implements
     public function setArgument($argument)
     {
         $this->argument = $argument;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = (boolean) $enabled;
     }
 
     /**
