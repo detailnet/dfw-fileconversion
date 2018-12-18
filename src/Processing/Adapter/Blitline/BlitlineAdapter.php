@@ -6,8 +6,8 @@ use GuzzleHttp\Psr7\Response as PsrResponse;
 
 use GuzzleHttp\Exception as GuzzleException;
 
-use Detail\Blitline\Client\BlitlineClient;
-use Detail\Blitline\Client\Response\JobProcessed as BlitlineJobProcessedResponse;
+use Detail\Blitline\BlitlineClient;
+use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
 
 use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;

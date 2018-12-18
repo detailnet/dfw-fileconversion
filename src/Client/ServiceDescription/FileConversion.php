@@ -24,7 +24,7 @@ return [
                     'required'    => false,
                 ],
             ],
-            'responseClass' => Response\JobList::CLASS,
+            'responseModel' => Response\JobList::CLASS,
         ],
         'fetchJob' => [
             'httpMethod'       => 'GET',
@@ -39,7 +39,7 @@ return [
                     'required'    => true,
                 ],
             ],
-            'responseClass' => Response\Job::CLASS,
+            'responseModel' => Response\Job::CLASS,
         ],
         'submitJob' => [
             'httpMethod'       => 'POST',
@@ -64,7 +64,7 @@ return [
             'additionalParameters' => [
                 'location' => 'json',
             ],
-            'responseClass' => Response\Job::CLASS,
+            'responseModel' => Response\Job::CLASS,
         ],
     ],
 ];
