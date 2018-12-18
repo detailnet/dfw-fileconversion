@@ -2,9 +2,12 @@
 
 namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
+use GuzzleHttp\Psr7\Response as PsrResponse;
+
+use GuzzleHttp\Exception as GuzzleException;
+
 use Detail\Blitline\Client\BlitlineClient;
-use Detail\Blitline\Exception as BlitlineException;
-use Detail\Blitline\Response\JobProcessed as BlitlineJobProcessedResponse;
+use Detail\Blitline\Client\Response\JobProcessed as BlitlineJobProcessedResponse;
 
 use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;
@@ -90,7 +93,15 @@ class BlitlineAdapter extends Adapter\BaseAdapter
         try {
             $response = $client->submitJob($job);
             return $response->getJobId();
-        } catch (BlitlineException\ServerException $e) {
+        } catch (GuzzleException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (GuzzleException\RequestException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
@@ -98,14 +109,6 @@ class BlitlineAdapter extends Adapter\BaseAdapter
                     'Failed to start processing because Blitline seems to be unavailable: %s',
                     $e->getMessage()
                 ),
-                0,
-                $e
-            );
-        } catch (BlitlineException\ClientException $e) {
-            // Invalid job or 4xx problems.
-            // Retrying won't change anything, so we need to fail...
-            throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed immediately after submitting the job: %s', $e->getMessage()),
                 0,
                 $e
             );
@@ -129,7 +132,15 @@ class BlitlineAdapter extends Adapter\BaseAdapter
 
         try {
             $response = $client->pollJob(['job_id' => $task->getProcessId()]);
-        } catch (BlitlineException\ServerException $e) {
+        } catch (GuzzleException\ClientException $e) {
+            // Invalid job or 4xx problems.
+            // Retrying won't change anything, so we need to fail...
+            throw new Exception\ProcessingFailedException(
+                sprintf('Processing failed after polling for the completion of the job: %s', $e->getMessage()),
+                0,
+                $e
+            );
+        } catch (GuzzleException\RequestException $e) {
             // The request couldn't be processed (e.g. network problems, performance issues, 5xx problems, etc.)
             // It's possible, the processing can be started successfully upon retry.
             throw new Exception\ProcessingUnavailableException(
@@ -137,14 +148,6 @@ class BlitlineAdapter extends Adapter\BaseAdapter
                     'Failed to check processing because Blitline seems to be unavailable: %s',
                     $e->getMessage()
                 ),
-                0,
-                $e
-            );
-        } catch (BlitlineException\ClientException $e) {
-            // Invalid job or 4xx problems.
-            // Retrying won't change anything, so we need to fail...
-            throw new Exception\ProcessingFailedException(
-                sprintf('Processing failed after polling for the completion of the job: %s', $e->getMessage()),
                 0,
                 $e
             );
@@ -206,9 +209,27 @@ class BlitlineAdapter extends Adapter\BaseAdapter
 
     /**
      * @param Task\TaskInterface $task
+     * @return string[]
+     */
+    protected function getTaskActions(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActions($task);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
+     * @return array
+     */
+    protected function getTaskActionParams(Task\TaskInterface $task)
+    {
+        return $this->getJobCreator()->getActionParams($task);
+    }
+
+    /**
+     * @param Task\TaskInterface $task
      * @return \Detail\Blitline\Job\Definition\JobDefinitionInterface
      */
-    protected function createBlitlineJob(Task\TaskInterface $task)
+    private function createBlitlineJob(Task\TaskInterface $task)
     {
         $jobCreator = $this->getJobCreator();
 
@@ -225,7 +246,7 @@ class BlitlineAdapter extends Adapter\BaseAdapter
      * @param BlitlineJobProcessedResponse|array $response
      * @return BlitlineJobProcessedResponse
      */
-    protected function getJobProcessedResponse($response)
+    private function getJobProcessedResponse($response)
     {
         if (!$response instanceof BlitlineJobProcessedResponse) {
             if (!is_array($response)) {
@@ -235,7 +256,9 @@ class BlitlineAdapter extends Adapter\BaseAdapter
             }
 
             try {
-                $response = BlitlineJobProcessedResponse::fromData($response);
+                $response = new BlitlineJobProcessedResponse(
+                    new PsrResponse(200, [], json_encode($response))
+                );
             } catch (\Exception $e) {
                 throw new Exception\ProcessingFailedException(
                     sprintf(
@@ -249,23 +272,5 @@ class BlitlineAdapter extends Adapter\BaseAdapter
         }
 
         return $response;
-    }
-
-    /**
-     * @param Task\TaskInterface $task
-     * @return string[]
-     */
-    protected function getTaskActions(Task\TaskInterface $task)
-    {
-        return $this->getJobCreator()->getActions($task);
-    }
-
-    /**
-     * @param Task\TaskInterface $task
-     * @return array
-     */
-    protected function getTaskActionParams(Task\TaskInterface $task)
-    {
-        return $this->getJobCreator()->getActionParams($task);
     }
 }

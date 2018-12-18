@@ -2,9 +2,7 @@
 
 namespace Detail\FileConversion\Processing\Adapter\Internal;
 
-use Detail\FileConversion\Processing\Action;
 use Detail\FileConversion\Processing\Adapter;
-use Detail\FileConversion\Processing\Exception;
 use Detail\FileConversion\Processing\Task;
 
 abstract class BaseInternalJobCreator extends Adapter\BaseJobCreator implements

@@ -1,8 +1,6 @@
 <?php
 
-namespace Detail\FileConversion\Processing\Service;
-
-use Detail\FileConversion\Processing\TaskProcessorInterface;
+namespace Detail\FileConversion\Processing;
 
 interface TaskProcessorAwareInterface
 {
