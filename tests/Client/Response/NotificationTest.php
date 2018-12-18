@@ -8,19 +8,12 @@ use Detail\FileConversion\Client\Response\NotificationCall;
 
 class NotificationTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = Notification::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(Notification::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = Notification::fromResult(array($key => $value));
+        $response = Notification::fromResult([$key => $value]);
         $this->assertInstanceOf(Notification::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -28,7 +21,7 @@ class NotificationTest extends ResponseTestCase
     public function testTypeCanBeGet()
     {
         $type = 'some-type';
-        $result = array('type' => $type);
+        $result = ['type' => $type];
 
         $response = $this->getResponse($result);
 
@@ -36,14 +29,14 @@ class NotificationTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getType();
     }
 
     public function testParamsCanBeGet()
     {
-        $params = array('key' => 'value');
-        $result = array('params' => $params);
+        $params = ['key' => 'value'];
+        $result = ['params' => $params];
 
         $response = $this->getResponse($result);
 
@@ -52,15 +45,15 @@ class NotificationTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
     public function testCallsCanBeGet()
     {
         $success = true;
-        $calls = array(array('success' => $success));
-        $result = array('calls' => $calls);
+        $calls = [['success' => $success]];
+        $result = ['calls' => $calls];
 
         $response = $this->getResponse($result);
 
@@ -87,15 +80,13 @@ class NotificationTest extends ResponseTestCase
 
     /**
      * @param array $data
-     * @param string $class
      * @return Notification
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = Notification::CLASS;
-        }
+        /** @var Notification $response */
+        $response = $this->createResponse($data, Notification::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

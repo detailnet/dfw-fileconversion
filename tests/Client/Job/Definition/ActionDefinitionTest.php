@@ -30,7 +30,7 @@ class ActionDefinitionTest extends DefinitionTestCase
     public function testParamsCanBeSet()
     {
         $definition = $this->getDefinition();
-        $params = array('a' => 'b');
+        $params = ['a' => 'b'];
 
         $this->setMethodReturnValue($definition, 'getOption', $params);
 
@@ -43,7 +43,7 @@ class ActionDefinitionTest extends DefinitionTestCase
     public function testSaveOptionsCanBeSet()
     {
         $definition = $this->getDefinition();
-        $saveOptions = array('a' => 'b');
+        $saveOptions = ['a' => 'b'];
 
         $this->setMethodReturnValue($definition, 'getOption', $saveOptions);
 

@@ -4,8 +4,8 @@ namespace DetailTest\FileConversion\Client\Job\Definition;
 
 use RuntimeException;
 
-use PHPUnit_Framework_TestCase as TestCase;
-use PHPUnit_Framework_MockObject_MockObject as MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 abstract class DefinitionTestCase extends TestCase
 {
@@ -29,12 +29,11 @@ abstract class DefinitionTestCase extends TestCase
             );
         }
 
-        $this->definition = $this->getMock(
-            $definitionClass,
-            array('setOption', 'getOption')
-        );
+        $this->definition = $this->getMockBuilder($definitionClass)
+            ->setMethods(['setOption', 'getOption'])
+            ->getMock();
 
-        $this->setMethodReturnValue($this->definition, 'setOption');
+        $this->setMethodReturnValue($this->definition, 'setOption', $this->definition);
     }
 
     /**

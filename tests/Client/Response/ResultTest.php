@@ -7,19 +7,12 @@ use Detail\FileConversion\Client\Response\Result;
 
 class ResultTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = Result::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(Result::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = Result::fromResult(array($key => $value));
+        $response = Result::fromResult([$key => $value]);
         $this->assertInstanceOf(Result::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -27,7 +20,7 @@ class ResultTest extends ResponseTestCase
     public function testIdCanBeGet()
     {
         $id = 'some-id';
-        $result = array('id' => $id);
+        $result = ['id' => $id];
 
         $response = $this->getResponse($result);
 
@@ -35,14 +28,14 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getId();
     }
 
     public function testIdentifierCanBeGet()
     {
         $identifier = 'some-identifier';
-        $result = array('identifier' => $identifier);
+        $result = ['identifier' => $identifier];
 
         $response = $this->getResponse($result);
 
@@ -56,7 +49,7 @@ class ResultTest extends ResponseTestCase
     public function testUrlCanBeGet()
     {
         $url = 'some-url';
-        $result = array('url' => $url);
+        $result = ['url' => $url];
 
         $response = $this->getResponse($result);
 
@@ -64,14 +57,14 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getUrl();
     }
 
     public function testMetaCanBeGet()
     {
-        $params = array('key' => 'value');
-        $result = array('meta' => $params);
+        $params = ['key' => 'value'];
+        $result = ['meta' => $params];
 
         $response = $this->getResponse($result);
 
@@ -80,21 +73,19 @@ class ResultTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getMeta();
     }
 
     /**
      * @param array $data
-     * @param string $class
      * @return Result
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = Result::CLASS;
-        }
+        /** @var Result $response */
+        $response = $this->createResponse($data, Result::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

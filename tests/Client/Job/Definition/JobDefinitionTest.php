@@ -34,16 +34,16 @@ class JobDefinitionTest extends DefinitionTestCase
         $definition = $this->getDefinition();
         $actionOne = new ActionDefinition();
         $actionTwo = new ActionDefinition();
-        $actions = array(
+        $actions = [
             $actionOne,
             $actionTwo,
-        );
+        ];
 
         $this->setMethodReturnValue($definition, 'getOption', $actions);
 
         /** @var JobDefinition $definition */
 
-        $this->assertEquals($definition, $definition->setActions(array($actionOne)));
+        $this->assertEquals($definition, $definition->setActions([$actionOne]));
         $this->assertEquals($definition, $definition->addAction($actionTwo));
         $this->assertEquals($actions, $definition->getActions());
     }
@@ -53,16 +53,16 @@ class JobDefinitionTest extends DefinitionTestCase
         $definition = $this->getDefinition();
         $notificationOne = new NotificationDefinition();
         $notificationTwo = new NotificationDefinition();
-        $notifications = array(
+        $notifications = [
             $notificationOne,
             $notificationTwo,
-        );
+        ];
 
         $this->setMethodReturnValue($definition, 'getOption', $notifications);
 
         /** @var JobDefinition $definition */
 
-        $this->assertEquals($definition, $definition->setNotifications(array($notificationOne)));
+        $this->assertEquals($definition, $definition->setNotifications([$notificationOne]));
         $this->assertEquals($definition, $definition->addNotification($notificationTwo));
         $this->assertEquals($notifications, $definition->getNotifications());
     }

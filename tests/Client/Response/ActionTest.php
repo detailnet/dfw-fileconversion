@@ -8,19 +8,12 @@ use Detail\FileConversion\Client\Response\SaveOptions;
 
 class ActionTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = Action::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(Action::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = Action::fromResult(array($key => $value));
+        $response = Action::fromResult([$key => $value]);
         $this->assertInstanceOf(Action::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -28,7 +21,7 @@ class ActionTest extends ResponseTestCase
     public function testNameCanBeGet()
     {
         $name = 'some-name';
-        $result = array('name' => $name);
+        $result = ['name' => $name];
 
         $response = $this->getResponse($result);
 
@@ -36,14 +29,14 @@ class ActionTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getName();
     }
 
     public function testParamsCanBeGet()
     {
-        $params = array('key' => 'value');
-        $result = array('params' => $params);
+        $params = ['key' => 'value'];
+        $result = ['params' => $params];
 
         $response = $this->getResponse($result);
 
@@ -52,15 +45,15 @@ class ActionTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
     public function testSaveOptionsCanBeGet()
     {
         $type = 'some-type';
-        $saveOptions = array('type' => $type);
-        $result = array('save' => $saveOptions);
+        $saveOptions = ['type' => $type];
+        $result = ['save' => $saveOptions];
 
         $response = $this->getResponse($result);
 
@@ -81,15 +74,13 @@ class ActionTest extends ResponseTestCase
 
     /**
      * @param array $data
-     * @param string $class
      * @return Action
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = Action::CLASS;
-        }
+        /** @var Action $response */
+        $response = $this->createResponse($data, Action::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

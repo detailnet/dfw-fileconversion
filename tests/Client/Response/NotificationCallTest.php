@@ -9,19 +9,12 @@ use Detail\FileConversion\Client\Response\NotificationCall;
 
 class NotificationCallTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = NotificationCall::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(NotificationCall::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = NotificationCall::fromResult(array($key => $value));
+        $response = NotificationCall::fromResult([$key => $value]);
         $this->assertInstanceOf(NotificationCall::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -29,7 +22,7 @@ class NotificationCallTest extends ResponseTestCase
     public function testSentOnCanBeGet()
     {
         $date = new DateTime();
-        $result = array('sent_on' => $date->format('c'));
+        $result = ['sent_on' => $date->format('c')];
 
         $response = $this->getResponse($result);
 
@@ -37,14 +30,14 @@ class NotificationCallTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSentOn();
     }
 
     public function testSuccessCanBeGet()
     {
         $success = true;
-        $result = array('success' => $success);
+        $result = ['success' => $success];
 
         $response = $this->getResponse($result);
 
@@ -52,21 +45,19 @@ class NotificationCallTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->isSuccess();
     }
 
     /**
      * @param array $data
-     * @param string $class
      * @return NotificationCall
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = NotificationCall::CLASS;
-        }
+        /** @var NotificationCall $response */
+        $response = $this->createResponse($data, NotificationCall::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

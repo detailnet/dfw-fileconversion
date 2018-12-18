@@ -2,12 +2,10 @@
 
 namespace DetailTest\FileConversion\Client\Client;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 use GuzzleHttp\Command\Command;
-use GuzzleHttp\Command\Exception\CommandException;
 
-use Detail\FileConversion\Client\Exception;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Job\Definition\JobDefinition;
 use Detail\FileConversion\Client\Job\JobBuilder;
@@ -19,9 +17,9 @@ class FileConversionClientTest extends TestCase
 
     public function provideConfigValues()
     {
-        return array(
-            array('random_application_id'),
-        );
+        return [
+            ['random_application_id'],
+        ];
     }
 
 //    protected function setUp()
@@ -35,15 +33,15 @@ class FileConversionClientTest extends TestCase
      */
     public function testFactoryReturnsClient($applicationId)
     {
-        $config = array(
+        $config = [
             'application_id' => $applicationId
-        );
+        ];
 
         $jobBuilder = new JobBuilder();
 
         $client = FileConversionClient::factory($config, $jobBuilder);
 
-        $this->assertInstanceOf('Detail\FileConversion\Client\FileConversionClient', $client);
+        $this->assertInstanceOf(FileConversionClient::CLASS, $client);
         $this->assertEquals('https://dws-fileconversion.detailnet.ch/api', $client->getServiceUrl());
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
@@ -76,15 +74,15 @@ class FileConversionClientTest extends TestCase
      */
     public function testClientHasCommands($applicationId)
     {
-        $config = array(
+        $config = [
             'application_id' => $applicationId
-        );
+        ];
 
         $client = FileConversionClient::factory($config);
 
-        $this->assertTrue(is_callable(array($client, 'listJobs')));
-        $this->assertTrue(is_callable(array($client, 'fetchJob')));
-        $this->assertTrue(is_callable(array($client, 'submitJob')));
+        $this->assertTrue(is_callable([$client, 'listJobs']));
+        $this->assertTrue(is_callable([$client, 'fetchJob']));
+        $this->assertTrue(is_callable([$client, 'submitJob']));
 
 //        $this->assertInstanceOf('Guzzle\Service\Command\OperationCommand', $client->getCommand('listJobs'));
 //        $this->assertEquals(
@@ -117,42 +115,9 @@ class FileConversionClientTest extends TestCase
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
 
-    public function testCommandExceptionsAreHandled()
-    {
-//        $commandResponse = array('a' => 'b');
-//
-        $command = $this->getMockBuilder(Command::CLASS)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $exception = $this->getMockBuilder(CommandException::CLASS)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var CommandException $exception */
-
-        $client = $this->getMockBuilder(FileConversionClient::CLASS)
-            ->disableOriginalConstructor()
-            ->setMethods(array('getCommand', 'execute'))
-            ->getMock();
-        $client
-            ->expects($this->any())
-            ->method('getCommand')
-            ->will($this->returnValue($command));
-        $client
-            ->expects($this->any())
-            ->method('execute')
-            ->will($this->throwException($exception));
-
-        /** @var FileConversionClient $client */
-
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
-        $client->__call('dummyCommand', array());
-    }
-
     public function testCommandsAcceptDefinitions()
     {
-        $commandResponse = array('a' => 'b');
+        $commandResponse = ['a' => 'b'];
 
         $command = $this->getMockBuilder(Command::CLASS)
             ->disableOriginalConstructor()
@@ -160,7 +125,7 @@ class FileConversionClientTest extends TestCase
 
         $client = $this->getMockBuilder(FileConversionClient::CLASS)
             ->disableOriginalConstructor()
-            ->setMethods(array('getCommand', 'execute'))
+            ->setMethods(['getCommand', 'execute'])
             ->getMock();
         $client
             ->expects($this->any())
@@ -173,14 +138,14 @@ class FileConversionClientTest extends TestCase
 
         /** @var FileConversionClient $client */
 
-        $commandArgs = array('c' => 'd');
+        $commandArgs = ['c' => 'd'];
 
-        $definition = $this->getMock(JobDefinition::CLASS);
+        $definition = $this->getMockBuilder(JobDefinition::CLASS)->getMock();
         $definition
             ->expects($this->any())
             ->method('toArray')
             ->will($this->returnValue($commandArgs));
 
-        $this->assertEquals($commandResponse, $client->__call('dummyCommand', array($definition)));
+        $this->assertEquals($commandResponse, $client->__call('dummyCommand', [$definition]));
     }
 }

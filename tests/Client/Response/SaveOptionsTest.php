@@ -7,19 +7,12 @@ use Detail\FileConversion\Client\Response\SaveOptions;
 
 class SaveOptionsTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = SaveOptions::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(SaveOptions::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = SaveOptions::fromResult(array($key => $value));
+        $response = SaveOptions::fromResult([$key => $value]);
         $this->assertInstanceOf(SaveOptions::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -27,7 +20,7 @@ class SaveOptionsTest extends ResponseTestCase
     public function testIdentifierCanBeGet()
     {
         $identifier = 'some-identifier';
-        $result = array('identifier' => $identifier);
+        $result = ['identifier' => $identifier];
 
         $response = $this->getResponse($result);
 
@@ -41,7 +34,7 @@ class SaveOptionsTest extends ResponseTestCase
     public function testTypeCanBeGet()
     {
         $type = 'some-type';
-        $result = array('type' => $type);
+        $result = ['type' => $type];
 
         $response = $this->getResponse($result);
 
@@ -49,14 +42,14 @@ class SaveOptionsTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getType();
     }
 
     public function testParamsCanBeGet()
     {
-        $params = array('key' => 'value');
-        $result = array('params' => $params);
+        $params = ['key' => 'value'];
+        $result = ['params' => $params];
 
         $response = $this->getResponse($result);
 
@@ -65,21 +58,19 @@ class SaveOptionsTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getParams();
     }
 
     /**
      * @param array $data
-     * @param string $class
      * @return SaveOptions
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = SaveOptions::CLASS;
-        }
+        /** @var SaveOptions $response */
+        $response = $this->createResponse($data, SaveOptions::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

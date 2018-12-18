@@ -12,19 +12,12 @@ use Detail\FileConversion\Client\Response\Result;
 
 class JobTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = Job::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(Job::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = Job::fromResult(array($key => $value));
+        $response = Job::fromResult([$key => $value]);
         $this->assertInstanceOf(Job::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -32,7 +25,7 @@ class JobTest extends ResponseTestCase
     public function testIdCanBeGet()
     {
         $id = 'some-id';
-        $result = array('id' => $id);
+        $result = ['id' => $id];
 
         $response = $this->getResponse($result);
 
@@ -40,14 +33,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getId();
     }
 
     public function testSourceUrlCanBeGet()
     {
         $url = 'some-id';
-        $result = array('source_url' => $url);
+        $result = ['source_url' => $url];
 
         $response = $this->getResponse($result);
 
@@ -55,14 +48,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSourceUrl();
     }
 
     public function testSourceMetaCanBeGet()
     {
-        $meta = array('key' => 'value');
-        $result = array('source_meta' => $meta);
+        $meta = ['key' => 'value'];
+        $result = ['source_meta' => $meta];
 
         $response = $this->getResponse($result);
 
@@ -70,14 +63,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSourceMeta();
     }
 
     public function testStatusCanBeGet()
     {
         $status = 'some-status';
-        $result = array('status' => $status);
+        $result = ['status' => $status];
 
         $response = $this->getResponse($result);
 
@@ -85,14 +78,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getStatus();
     }
 
     public function testActionCountCanBeGet()
     {
         $count = 1;
-        $result = array('action_count' => $count);
+        $result = ['action_count' => $count];
 
         $response = $this->getResponse($result);
 
@@ -100,15 +93,15 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getActionCount();
     }
 
     public function testActionsCanBeGet()
     {
         $name = 'some-action';
-        $actions = array(array('name' => $name));
-        $result = array('actions' => $actions);
+        $actions = [['name' => $name]];
+        $result = ['actions' => $actions];
 
         $response = $this->getResponse($result);
 
@@ -129,14 +122,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getActions();
     }
 
     public function testNotificationCountCanBeGet()
     {
         $count = 1;
-        $result = array('notification_count' => $count);
+        $result = ['notification_count' => $count];
 
         $response = $this->getResponse($result);
 
@@ -144,15 +137,15 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getNotificationCount();
     }
 
     public function testNotificationCanBeGet()
     {
         $type = 'some-notification';
-        $notifications = array(array('type' => $type));
-        $result = array('notifications' => $notifications);
+        $notifications = [['type' => $type]];
+        $result = ['notifications' => $notifications];
 
         $response = $this->getResponse($result);
 
@@ -180,7 +173,7 @@ class JobTest extends ResponseTestCase
     public function testResultCountCanBeGet()
     {
         $count = 1;
-        $result = array('result_count' => $count);
+        $result = ['result_count' => $count];
 
         $response = $this->getResponse($result);
 
@@ -188,15 +181,15 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getResultCount();
     }
 
     public function testResultsCanBeGet()
     {
         $identifier = 'some-identifier';
-        $results = array(array('identifier' => $identifier));
-        $result = array('results' => $results);
+        $results = [['identifier' => $identifier]];
+        $result = ['results' => $results];
 
         $response = $this->getResponse($result);
 
@@ -224,7 +217,7 @@ class JobTest extends ResponseTestCase
     public function testSubmittedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = array('submitted_on' => $date->format('c'));
+        $result = ['submitted_on' => $date->format('c')];
 
         $response = $this->getResponse($result);
 
@@ -232,14 +225,14 @@ class JobTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getSubmittedOn();
     }
 
     public function testProcessingStartedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = array('processing_started_on' => $date->format('c'));
+        $result = ['processing_started_on' => $date->format('c')];
 
         $response = $this->getResponse($result);
 
@@ -253,7 +246,7 @@ class JobTest extends ResponseTestCase
     public function testProcessingCompletedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = array('processing_completed_on' => $date->format('c'));
+        $result = ['processing_completed_on' => $date->format('c')];
 
         $response = $this->getResponse($result);
 
@@ -267,7 +260,7 @@ class JobTest extends ResponseTestCase
     public function testCompletedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = array('completed_on' => $date->format('c'));
+        $result = ['completed_on' => $date->format('c')];
 
         $response = $this->getResponse($result);
 
@@ -280,15 +273,13 @@ class JobTest extends ResponseTestCase
 
     /**
      * @param array $data
-     * @param string $class
      * @return Job
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = Job::CLASS;
-        }
+        /** @var Job $response */
+        $response = $this->createResponse($data, Job::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

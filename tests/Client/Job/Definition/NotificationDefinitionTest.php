@@ -30,7 +30,7 @@ class NotificationDefinitionTest extends DefinitionTestCase
     public function testParamsCanBeSet()
     {
         $definition = $this->getDefinition();
-        $params = array('a' => 'b');
+        $params = ['a' => 'b'];
 
         $this->setMethodReturnValue($definition, 'getOption', $params);
 

@@ -2,7 +2,7 @@
 
 namespace DetailTest\FileConversion\Client\Job\Definition;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 use Detail\FileConversion\Client\Job\Definition\BaseDefinition;
 
@@ -21,94 +21,92 @@ class BaseDefinitionTest extends TestCase
 
         /** @var BaseDefinition $subDefinition */
         $subDefinition->setOptions(
-            array(
+            [
                 'subA' => 'subB'
-            )
+            ]
         );
 
-        return array(
-            array(
-                array(
-                ),
-                array(
-                ),
-                array(
-                ),
-            ),
-            array(
-                array(
+        return [
+            [
+                [
+                ],
+                [
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'a' => 'b',
-                    'c' => array(
+                    'c' => [
                         'd' => 'e',
-                        'f' => array(
+                        'f' => [
                             'g' => 'h',
-                        ),
-                    ),
-                ),
-                array(
+                        ],
+                    ],
+                ],
+                [
                     'a' => 'b1',
-                    'c' => array(
+                    'c' => [
                         'd' => 'e1',
-                        'f' => array(
+                        'f' => [
                             'i' => 'j',
-                        ),
+                        ],
                         'k' => 'l',
-                    ),
+                    ],
                     'm' => $subDefinition,
-                ),
-                array(
+                ],
+                [
                     'a' => 'b1',
-                    'c' => array(
+                    'c' => [
                         'd' => 'e1',
-                        'f' => array(
+                        'f' => [
                             'g' => 'h',
                             'i' => 'j',
-                        ),
+                        ],
                         'k' => 'l',
-                    ),
-                    'm' => array(
+                    ],
+                    'm' => [
                         'subA' => 'subB'
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function provideOption()
     {
-        return array(
-            array(
+        return [
+            [
                 'key',
                 'defaultValue',
                 'initialValue',
                 'value',
                 'value',
-            ),
-            array(
+            ],
+            [
                 'key',
                 'defaultValue',
-                array(
+                [
                     'a' => 'b',
                     'c' => 'd',
-                ),
-                array(
+                ],
+                [
                     'a' => 'b1',
                     'e' => 'f',
-                ),
-                array(
+                ],
+                [
                     'a' => 'b1',
                     'c' => 'd',
                     'e' => 'f',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     protected function setUp()
     {
-        $this->definition = $this->getMockForAbstractClass(
-            'Detail\FileConversion\Client\Job\Definition\BaseDefinition'
-        );
+        $this->definition = $this->getMockForAbstractClass(BaseDefinition::CLASS);
     }
 
     /**
@@ -119,7 +117,7 @@ class BaseDefinitionTest extends TestCase
      */
     public function testOptionsCanBeApplied(array $initialOptions, array $options, array $expectedOptions)
     {
-        $this->assertEquals(array(), $this->definition->getOptions());
+        $this->assertEquals([], $this->definition->getOptions());
         $this->assertEquals($this->definition, $this->definition->setOptions($initialOptions));
         $this->assertEquals($initialOptions, $this->definition->getOptions());
         $this->assertEquals($this->definition, $this->definition->applyOptions($options));

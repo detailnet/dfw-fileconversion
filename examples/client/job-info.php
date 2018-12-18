@@ -12,6 +12,6 @@ if (!$jobId) {
 
 $client = FileConversionClient::factory($config);
 
-$response = $client->fetchJob(array('job_id' => $jobId));
+$response = $client->fetchJob(['job_id' => $jobId]);
 
 var_dump($response->getResult());

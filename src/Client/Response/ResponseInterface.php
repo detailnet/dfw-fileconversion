@@ -11,7 +11,8 @@ interface ResponseInterface
 
     /**
      * @param string $expression
+     * @param boolean $failOnNull
      * @return array|mixed
      */
-    public function getResult($expression = null);
+    public function getResult($expression = null, $failOnNull = true);
 }

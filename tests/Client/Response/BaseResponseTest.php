@@ -13,7 +13,7 @@ class BaseResponseTest extends ResponseTestCase
     {
         $resultKey = 'key';
         $resultValue = 'value';
-        $result = array($resultKey => $resultValue);
+        $result = [$resultKey => $resultValue];
 
         $response = $this->getResponse($result);
 
@@ -22,7 +22,7 @@ class BaseResponseTest extends ResponseTestCase
         $this->assertEquals($resultValue, $response->getResult($resultKey));
         $this->assertNull($response->getResult('non_existing_key', false));
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $response->getResult('non_existing_key');
     }
 
@@ -30,7 +30,7 @@ class BaseResponseTest extends ResponseTestCase
     {
         $resultKey = 'date';
         $resultValue = '2015-01-19T15:08:28+0100';
-        $result = array($resultKey => $resultValue);
+        $result = [$resultKey => $resultValue];
 
         $response = $this->getResponse($result);
 
@@ -38,21 +38,19 @@ class BaseResponseTest extends ResponseTestCase
         $this->assertEquals(new DateTime($resultValue), $response->getDateResult($resultKey));
         $this->assertNull($response->getDateResult('non_existing_key', false));
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $response->getDateResult('non_existing_key');
     }
 
     /**
      * @param array $data
-     * @param string $class
      * @return BaseResponse
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = BaseResponse::CLASS;
-        }
+        /** @var BaseResponse $response */
+        $response = $this->createResponse($data, BaseResponse::CLASS, true);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

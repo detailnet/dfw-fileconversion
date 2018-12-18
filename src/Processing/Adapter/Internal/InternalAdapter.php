@@ -4,7 +4,6 @@ namespace Detail\FileConversion\Processing\Adapter\Internal;
 
 use GuzzleHttp\Exception as GuzzleException;
 
-use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\FileConversionClient;
 use Detail\FileConversion\Client\Response\Job;
 

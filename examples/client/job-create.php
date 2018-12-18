@@ -28,12 +28,12 @@ $client = FileConversionClient::factory($config);
 $jobBuilder = $client->getJobBuilder();
 $jobBuilder->setDefaultOption(
     'action.save',
-    array(
+    [
         'type' => 's3',
-        'params' => array(
+        'params' => [
             'bucket' => $getConfig('s3bucket'),
-        ),
-    )
+        ],
+    ]
 );
 
 $job = $jobBuilder->createJob()
@@ -42,18 +42,18 @@ $job = $jobBuilder->createJob()
         $jobBuilder->createAction()
             ->setName('thumbnail')
             ->setParams(
-                array(
+                [
                     'size' => $imageSize,
-                )
+                ]
             )
             ->setSaveOptions(
-                array(
+                [
                     'identifier' => $imageName,
-                    'params' => array(
+                    'params' => [
 //                        'bucket' => $getConfig('s3bucket'),
                         'key' => $getConfig('s3path') . '/' . $imageName . '-' . $imageSize . '_dfw-fileconversion.jpg',
-                    ),
-                )
+                    ],
+                ]
             )
     );
 
@@ -62,9 +62,9 @@ try {
         $jobBuilder->createNotification()
 //            ->setType('webhook')
             ->setParams(
-                array(
+                [
                     'url' => $getConfig('notification_url'),
-                )
+                ]
             )
     );
 } catch (RuntimeException $e) {

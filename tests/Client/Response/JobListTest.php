@@ -8,19 +8,12 @@ use Detail\FileConversion\Client\Response\JobList;
 
 class JobListTest extends ResponseTestCase
 {
-    public function testResponseCanBeCreatedFromHttpResponse()
-    {
-        $response = JobList::fromHttpResponse($this->getHttpResponse());
-
-        $this->assertInstanceOf(JobList::CLASS, $response);
-    }
-
     public function testResponseCanBeCreatedFromResult()
     {
         $key = 'key';
         $value = 'value';
 
-        $response = JobList::fromResult(array($key => $value));
+        $response = JobList::fromResult([$key => $value]);
         $this->assertInstanceOf(JobList::CLASS, $response);
         $this->assertEquals($value, $response->getResult($key));
     }
@@ -28,13 +21,13 @@ class JobListTest extends ResponseTestCase
     public function testItemsCanBeGet()
     {
         $id = 'some-id';
-        $jobs = array(array('id' => $id));
-        $result = array(
+        $jobs = [['id' => $id]];
+        $result = [
             'jobs' => $jobs,
             'page_count' => 1,
             'page_size' => 10,
             'total_items' => 20,
-        );
+        ];
 
         $response = $this->getResponse($result);
 
@@ -59,7 +52,7 @@ class JobListTest extends ResponseTestCase
 
         $emptyResponse = $this->getResponse();
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $emptyResponse->getPageCount();
 
         /** @todo Handle expected exceptions for other methods... */
@@ -67,15 +60,13 @@ class JobListTest extends ResponseTestCase
 
     /**
      * @param array $data
-     * @param string $class
      * @return JobList
      */
-    protected function getResponse(array $data = array(), $class = null)
+    private function getResponse(array $data = [])
     {
-        if ($class === null) {
-            $class = JobList::CLASS;
-        }
+        /** @var JobList $response */
+        $response = $this->createResponse($data, JobList::CLASS);
 
-        return parent::getResponse($data, $class);
+        return $response;
     }
 }

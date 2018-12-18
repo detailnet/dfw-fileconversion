@@ -3,7 +3,7 @@
 use Detail\FileConversion\Client\FileConversionClient;
 
 $config = require '../bootstrap.php';
-$params = array();
+$params = [];
 
 if (isset($_GET['page'])) {
     $params['page'] = (int) $_GET['page'];

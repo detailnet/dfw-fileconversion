@@ -2,7 +2,7 @@
 
 namespace DetailTest\FileConversion\Client\Job;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 use Detail\FileConversion\Client\Exception as ClientException;
 use Detail\FileConversion\Client\Job\Definition;
@@ -17,66 +17,66 @@ class JobBuilderTest extends TestCase
 
     public function provideJobDefinitionDefaultOptions()
     {
-        return array(
-            array(
-                array(
-                ),
-                array(
-                ),
-            ),
-            array(
-                array(
+        return [
+            [
+                [
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'job.src' => 'job.src',
                     'function.name' => 'function.name'
-                ),
-                array(
+                ],
+                [
                     'src' => 'job.src',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'src' => 'src',
                     'job' => 'job',
                     'function' => 'function',
                     'job.' => 'job.',
                     'function.' => 'function.',
-                ),
-                array(
-                ),
-            ),
-        );
+                ],
+                [
+                ],
+            ],
+        ];
     }
 
     public function provideActionDefinitionDefaultOptions()
     {
-        return array(
-            array(
-                array(
-                ),
-                array(
-                ),
-            ),
-            array(
-                array(
+        return [
+            [
+                [
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'job.source_url' => 'job.source_url',
                     'action.name' => 'action.name'
-                ),
-                array(
+                ],
+                [
                     'name' => 'action.name',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'source_url' => 'source_url',
                     'job' => 'job',
                     'action' => 'action',
                     'job.' => 'job.',
                     'action.' => 'action.',
-                ),
-                array(
-                ),
-            ),
-        );
+                ],
+                [
+                ],
+            ],
+        ];
     }
 
     protected function setUp()
@@ -131,7 +131,7 @@ class JobBuilderTest extends TestCase
 
     public function testDefaultOptionsCanBeSet()
     {
-        $options = array('key' => 'value');
+        $options = ['key' => 'value'];
 
         $this->jobBuilder->setDefaultOptions($options);
 
@@ -162,7 +162,7 @@ class JobBuilderTest extends TestCase
 
     public function testDefinitionCreationWithMissingClassThrowsException()
     {
-        $this->setExpectedException(ClientException\RuntimeException::CLASS);
+        $this->expectException(ClientException\RuntimeException::CLASS);
 
         $this->jobBuilder->setJobClass('NonExistingDefinitionClass');
         $this->jobBuilder->createJob();
@@ -170,7 +170,7 @@ class JobBuilderTest extends TestCase
 
     public function testDefinitionCreationWithInvalidInterfaceThrowsException()
     {
-        $this->setExpectedException(ClientException\RuntimeException::CLASS);
+        $this->expectException(ClientException\RuntimeException::CLASS);
 
         // Using existing class which doesn't implement Detail\FileConversion\Client\Job\JobBuilder\Definition\DefinitionInterface
         $this->jobBuilder->setJobClass(JobBuilder::CLASS);
@@ -208,13 +208,13 @@ class JobBuilderTest extends TestCase
     public function testDefaultOptionsAreEmptyUnknownDefinition()
     {
         $this->jobBuilder->setDefaultOptions(
-            array('job.src' => 'job.src', 'function.name' => 'function.name')
+            ['job.src' => 'job.src', 'function.name' => 'function.name']
         );
 
-        $definition = $this->getMock(Definition\DefinitionInterface::CLASS);
+        $definition = $this->getMockBuilder(Definition\DefinitionInterface::CLASS)->getMock();
 
         /** @var Definition\DefinitionInterface $definition */
 
-        $this->assertEquals(array(), $this->jobBuilder->getDefaultOptions($definition));
+        $this->assertEquals([], $this->jobBuilder->getDefaultOptions($definition));
     }
 }

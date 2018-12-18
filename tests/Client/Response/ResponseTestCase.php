@@ -2,9 +2,9 @@
 
 namespace DetailTest\FileConversion\Client\Response;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
-use GuzzleHttp\Message\Response;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 
 use Detail\FileConversion\Client\Response\ResponseInterface;
 
@@ -13,31 +13,37 @@ abstract class ResponseTestCase extends TestCase
     /**
      * @param array $data
      * @param string $class
+     * @param bool $abstract
      * @return ResponseInterface
      */
-    protected function getResponse(array $data = array(), $class = null)
+    protected function createResponse(array $data = [], $class = null, $abstract = false)
     {
         if ($class === null) {
             $class = str_replace('DetailTest\\', 'Detail\\', get_class($this));
         }
 
-        $httpResponse = $this->getHttpResponse($data);
+        $httpResponse = $this->createHttpResponse($data);
 
-        return $this->getMockForAbstractClass($class, array($httpResponse));
+        if ($abstract) {
+            $response = $this->getMockBuilder($class)
+//                ->enableOriginalConstructor()
+                ->setConstructorArgs([$httpResponse])
+                ->getMockForAbstractClass();
+
+            /** @var ResponseInterface $response */
+        } else {
+            $response = new $class($httpResponse);
+        }
+
+        return $response;
     }
 
     /**
      * @param array $data
-     * @return Response
+     * @return PsrResponse
      */
-    protected function getHttpResponse(array $data = array())
+    private function createHttpResponse(array $data = [])
     {
-        $response = $this->getMock(Response::CLASS, array(), array(), '', false);
-        $response
-            ->expects($this->any())
-            ->method('json')
-            ->will($this->returnValue($data));
-
-        return $response;
+        return new PsrResponse(200, [], json_encode($data));
     }
 }
