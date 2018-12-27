@@ -14,7 +14,7 @@ $imageSize = isset($_GET['image_size']) ? $_GET['image_size'] : 200;
 $image = new SplFileInfo($imageUrl);
 $imageName = $image->getBasename();
 
-$getConfig = function($optionName) use ($config) {
+$getConfig = function ($optionName) use ($config) {
     if (!isset($config[$optionName])) {
         throw new RuntimeException(sprintf('Missing configuration option "%s"', $optionName));
     }
@@ -50,7 +50,7 @@ $job = $jobBuilder->createJob()
                 [
                     'identifier' => $imageName,
                     'params' => [
-//                        'bucket' => $getConfig('s3bucket'),
+                        // 'bucket' => $getConfig('s3bucket'),
                         'key' => $getConfig('s3path') . '/' . $imageName . '-' . $imageSize . '_dfw-fileconversion.jpg',
                     ],
                 ]
@@ -60,7 +60,7 @@ $job = $jobBuilder->createJob()
 try {
     $job->addNotification(
         $jobBuilder->createNotification()
-//            ->setType('webhook')
+            // ->setType('webhook')
             ->setParams(
                 [
                     'url' => $getConfig('notification_url'),
