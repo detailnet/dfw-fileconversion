@@ -240,7 +240,7 @@ abstract class BaseResponse implements
     {
         $data = json_decode($value, true);
 
-        if (!$data) {
+        if ($data === null) {
             $message = 'Unknown error';
             $jsonError = json_last_error();
 
