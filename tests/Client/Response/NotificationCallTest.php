@@ -22,11 +22,12 @@ class NotificationCallTest extends ResponseTestCase
     public function testSentOnCanBeGet()
     {
         $date = new DateTime();
-        $result = ['sent_on' => $date->format('c')];
+        $formattedDate = $date->format('c');
+        $result = ['sent_on' => $formattedDate];
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($date, $response->getSentOn());
+        $this->assertEquals($formattedDate, $response->getSentOn()->format('c'));
 
         $emptyResponse = $this->getResponse();
 

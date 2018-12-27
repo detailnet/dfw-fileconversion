@@ -111,7 +111,8 @@ class FileConversionClientTest extends TestCase
 
         $jobBuilder = new JobBuilder();
 
-        $this->assertEquals($client, $client->setJobBuilder($jobBuilder));
+        $client->setJobBuilder($jobBuilder);
+
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
 

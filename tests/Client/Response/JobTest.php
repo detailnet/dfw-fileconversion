@@ -217,11 +217,12 @@ class JobTest extends ResponseTestCase
     public function testSubmittedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = ['submitted_on' => $date->format('c')];
+        $formattedDate = $date->format('c');
+        $result = ['submitted_on' => $formattedDate];
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($date, $response->getSubmittedOn());
+        $this->assertEquals($formattedDate, $response->getSubmittedOn()->format('c'));
 
         $emptyResponse = $this->getResponse();
 
@@ -232,11 +233,12 @@ class JobTest extends ResponseTestCase
     public function testProcessingStartedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = ['processing_started_on' => $date->format('c')];
+        $formattedDate = $date->format('c');
+        $result = ['processing_started_on' => $formattedDate];
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($date, $response->getProcessingStartedOn());
+        $this->assertEquals($formattedDate, $response->getProcessingStartedOn()->format('c'));
 
         $emptyResponse = $this->getResponse();
 
@@ -246,11 +248,12 @@ class JobTest extends ResponseTestCase
     public function testProcessingCompletedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = ['processing_completed_on' => $date->format('c')];
+        $formattedDate = $date->format('c');
+        $result = ['processing_completed_on' => $formattedDate];
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($date, $response->getProcessingCompletedOn());
+        $this->assertEquals($formattedDate, $response->getProcessingCompletedOn()->format('c'));
 
         $emptyResponse = $this->getResponse();
 
@@ -260,11 +263,12 @@ class JobTest extends ResponseTestCase
     public function testCompletedOnCanBeGet()
     {
         $date = new DateTime();
-        $result = ['completed_on' => $date->format('c')];
+        $formattedDate = $date->format('c');
+        $result = ['completed_on' => $formattedDate];
 
         $response = $this->getResponse($result);
 
-        $this->assertEquals($date, $response->getCompletedOn());
+        $this->assertEquals($formattedDate, $response->getCompletedOn()->format('c'));
 
         $emptyResponse = $this->getResponse();
 
