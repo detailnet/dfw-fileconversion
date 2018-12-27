@@ -4,7 +4,7 @@ namespace Detail\FileConversion\Processing;
 
 interface AdapterManagerInterface
 {
-    public function hasAdapter($name);
+    public function hasAdapter(string $name): bool;
 
-    public function getAdapter($name, $options = []);
+    public function getAdapter(string $name, array $options = []): Adapter\AdapterInterface;
 }

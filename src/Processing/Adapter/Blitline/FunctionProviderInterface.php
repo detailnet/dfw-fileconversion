@@ -4,15 +4,7 @@ namespace Detail\FileConversion\Processing\Adapter\Blitline;
 
 interface FunctionProviderInterface
 {
-    /**
-     * @param string $action
-     * @return boolean
-     */
-    public function hasFunction($action);
+    public function hasFunction(string $action): bool;
 
-    /**
-     * @param string $action
-     * @return Func\FunctionInterface
-     */
-    public function getFunction($action);
+    public function getFunction(string $action): Func\FunctionInterface;
 }
