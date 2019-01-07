@@ -54,7 +54,7 @@ class FileConversionClient extends ServiceClient
 //        }
 
         $defaultOptions = [
-            'base_uri' => 'https://dws-fileconversion.detailnet.ch/api',
+            'base_uri' => 'https://dws-fileconversion.detailnet.ch/api/',
             // Float describing the number of seconds to wait while trying to connect to a server.
             // 0 was the default (wait indefinitely).
             'connect_timeout' => 10,

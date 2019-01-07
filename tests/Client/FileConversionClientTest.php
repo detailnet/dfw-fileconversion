@@ -42,7 +42,7 @@ class FileConversionClientTest extends TestCase
         $client = FileConversionClient::factory($config, $jobBuilder);
 
         $this->assertInstanceOf(FileConversionClient::CLASS, $client);
-        $this->assertEquals('https://dws-fileconversion.detailnet.ch/api', $client->getServiceUrl());
+        $this->assertEquals('https://dws-fileconversion.detailnet.ch/api/', $client->getServiceUrl());
         $this->assertEquals($jobBuilder, $client->getJobBuilder());
     }
 
