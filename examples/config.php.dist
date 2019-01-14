@@ -1,10 +1,10 @@
 <?php
 
-return array(
+return [
     'dws_app_id' => '', // Only required for dws-fileconversion in production
     'dws_app_key' => '', // Only required for dws-fileconversion in production
-    'base_url' => 'http://dws-fileconversion.public.web01.detailnet.me/api/',
+    'base_uri' => 'http://dws-fileconversion.public.web04.detailnet.me/api/',
     'notification_url' => 'http://requestb.in/12v01hs1', // Remember to create an new RequestBin URL
     's3bucket' => 'your-bucket-name',
     's3path' => 'test-files', // Or any other path under your bucket
-);
+];

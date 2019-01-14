@@ -14,7 +14,7 @@ $imageSize = isset($_GET['image_size']) ? $_GET['image_size'] : 200;
 $image = new SplFileInfo($imageUrl);
 $imageName = $image->getBasename();
 
-$getConfig = function($optionName) use ($config) {
+$getConfig = function ($optionName) use ($config) {
     if (!isset($config[$optionName])) {
         throw new RuntimeException(sprintf('Missing configuration option "%s"', $optionName));
     }
@@ -28,12 +28,12 @@ $client = FileConversionClient::factory($config);
 $jobBuilder = $client->getJobBuilder();
 $jobBuilder->setDefaultOption(
     'action.save',
-    array(
+    [
         'type' => 's3',
-        'params' => array(
+        'params' => [
             'bucket' => $getConfig('s3bucket'),
-        ),
-    )
+        ],
+    ]
 );
 
 $job = $jobBuilder->createJob()
@@ -42,29 +42,29 @@ $job = $jobBuilder->createJob()
         $jobBuilder->createAction()
             ->setName('thumbnail')
             ->setParams(
-                array(
+                [
                     'size' => $imageSize,
-                )
+                ]
             )
             ->setSaveOptions(
-                array(
+                [
                     'identifier' => $imageName,
-                    'params' => array(
-//                        'bucket' => $getConfig('s3bucket'),
+                    'params' => [
+                        // 'bucket' => $getConfig('s3bucket'),
                         'key' => $getConfig('s3path') . '/' . $imageName . '-' . $imageSize . '_dfw-fileconversion.jpg',
-                    ),
-                )
+                    ],
+                ]
             )
     );
 
 try {
     $job->addNotification(
         $jobBuilder->createNotification()
-//            ->setType('webhook')
+            // ->setType('webhook')
             ->setParams(
-                array(
+                [
                     'url' => $getConfig('notification_url'),
-                )
+                ]
             )
     );
 } catch (RuntimeException $e) {
